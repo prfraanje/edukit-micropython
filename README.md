@@ -56,9 +56,9 @@ rshell -p COM4 cp urepl.mpy /flash
 Also see `rshell -h` for a short manual on how to use `rshell`.
 
 ## Usage
-- After uploading the mpy- or py-files to the microcontroller, the code can be started on the microcontroller by `import edukit_mp` at the micropython prompt, but that command is given from the Python code (edukit_pc.py) running on the PC. Note, when renaming `edukit_mp.mpy` by `main.mpy`, the code will automatically run on the microcontroller which may, however, lead to big trouble when there are bugs in the serial interface communication, because after each reset the buggy code is started again and the serial interface may not be available by tools such as `rshell`, `mpremote` or `mpfshell` to copy good code and a full re-flashing of the firmware may even be needed. Also note, that micropython gives prevalence to py-files over mpy-files. So if you upload an mpy-file make sure you remove the py-file with the same name from the `/flash` directory in on the micropython board. 
-- Before proceeding, open `edukit_pc.py` (note the subscript `_pc` indicating it runs on the PC) and scroll downwards almost at the end of the file within the statement `if __name__ == "__main__"` and make sure the variable `serial_port` has the correct name of the serial-port of the microcontroller on your operating system (e.g. `COM4` on Windows, `/dev/ttyACM0` or `/dev/ttyUSB0` on Linux).
-- After that, from the command line or from your Python IDE run the code `edukit_pc.py:
+- After uploading the mpy- or py-files to the microcontroller, the code can be started on the microcontroller by `import edukit_mp` at the micropython prompt, but that command is given from the Python code [edukit_pc.py](edukit_pc.py) running on the PC. Note, when renaming [edukit_mp.mpy](edukit_mp.py) by `main.mpy`, the code will automatically run on the microcontroller which may, however, lead to big trouble when there are bugs in the serial interface communication, because after each reset the buggy code is started again and the serial interface may not be available by tools such as `rshell`, `mpremote` or `mpfshell` to copy good code and a full re-flashing of the firmware may even be needed. Also note, that micropython gives prevalence to py-files over mpy-files. So if you upload an mpy-file make sure you remove the py-file with the same name from the `/flash` directory in on the micropython board. 
+- Before proceeding, open [edukit_pc.py](edukit_pc.py) (note the subscript `_pc` indicating it runs on the PC) and scroll downwards almost at the end of the file within the statement `if __name__ == "__main__"` and make sure the variable `serial_port` has the correct name of the serial-port of the microcontroller on your operating system (e.g. `COM4` on Windows, `/dev/ttyACM0` or `/dev/ttyUSB0` on Linux).
+- After that, from the command line or from your Python IDE run the code [edukit_pc.py](edukit_pc.py):
 ```
 python edukit_pc.py
 ```
@@ -91,14 +91,14 @@ mp    print("Hello, from Micropython on the microcontroller!')
 You can try, but you will get an exception. Exceptions are fed back to the user, but you can continue using the `-> ` REPL.
 
 ## Control
-The edukit has two sensor values (see the function `get_both_sensors()` in `edukit_mp.py` that are the input to the dynamic feedback controller. The first one is the number of microsteps of the stepper-motor (for details see the function `get_abs_pos_efficient` in the file `uL6474.py`) and the encoder value that measures the angle of the pendulum (for details see the definition of the `Encoder` object `enc` in `edukit_mp.py` and the definition of the `Encoder` class in `uencoder.py`). You can obtain these values, e.g., by entering
+The edukit has two sensor values (see the function `get_both_sensors()` in [edukit_mp.py](edukit_mp.py) that are the input to the dynamic feedback controller. The first one is the number of microsteps of the stepper-motor (for details see the function `get_abs_pos_efficient` in the file [uL6474.py](uL6474.py)) and the encoder value that measures the angle of the pendulum (for details see the definition of the `Encoder` object `enc` in [edukit_mp.py](edukit_mp.py) and the definition of the `Encoder` class in [uencoder.py](uencoder.py)). You can obtain these values, e.g., by entering
 ```
 mp get_abs_pos_efficient()
 mp enc.value()
 ```
 at the `-> ` Python prompt.
 
-The class `PID2` defined in `ucontroller.py` provides two PID controllers labeled 1 for feedback of the stepper-motor microsteps and 2 for feedback of the pendulum encoder. To get the PID parameters of the edukit-controller, you can do
+The class `PID2` defined in [ucontroller.py](ucontroller.py) provides two PID controllers labeled 1 for feedback of the stepper-motor microsteps and 2 for feedback of the pendulum encoder. To get the PID parameters of the edukit-controller, you can do
 ```
 mp pid.Kp1
 mp pid.Ki1
@@ -119,15 +119,15 @@ mp pid.Kd2 = 0.0001
 Don't forget to prefix with `mp `!
 For other values (like `pid.sample` and `pid.run1` and `pid.run2`) consult the `PID2` class in `ucontrol.py`.
 
-Because it is a bit tedious to give commands for each individual gain, the Python file `edukit_pc.py` has defined some convenience functions: `get_pid` and `set_pid`. These functions, however, are so called asynchronous functions, because these are defined by `async def` rather than by just `def`. This is necessary, because these functions communicate with the serial-interface through the asynchronous function `ser_eval` that is non-blockingly called by "awaiting". Doing so, enables the Python interpreter to rapidly switch tasks between the plotter, the serial-interface and the REPL, so it looks like these are running in parallel (note, the real plotting is done in another process, the `plot_process` that really runs simultaneously, for more details see e.g. [Multiprocessing-vs-multithreading-vs-asyncio](https://stackoverflow.com/questions/27435284/multiprocessing-vs-multithreading-vs-asyncio) on StackOverflow). Therefore, to run `get_pid` and `set_pid` we also have to await them:
+Because it is a bit tedious to give commands for each individual gain, the Python file [edukit_pc.py](edukit_pc.py) has defined some convenience functions: `get_pid` and `set_pid`. These functions, however, are so called asynchronous functions, because these are defined by `async def` rather than by just `def`. This is necessary, because these functions communicate with the serial-interface through the asynchronous function `ser_eval` that is non-blockingly called by "awaiting". Doing so, enables the Python interpreter to rapidly switch tasks between the plotter, the serial-interface and the REPL, so it looks like these are running in parallel (note, the real plotting is done in another process, the `plot_process` that really runs simultaneously, for more details see e.g. [Multiprocessing-vs-multithreading-vs-asyncio](https://stackoverflow.com/questions/27435284/multiprocessing-vs-multithreading-vs-asyncio) on StackOverflow). Therefore, to run `get_pid` and `set_pid` we also have to await them:
 ```
 await get_pid()
 await set_pid(0.001,0.0,0.0001,1)
 ```
-Note, these functions are (initially) evaluated on the PC, though they lead to evaluations on the microcontroller, so do not prefix them with `mp `. See the definitions of the functions in `edukit_pc.py` for more details on their operation.
+Note, these functions are (initially) evaluated on the PC, though they lead to evaluations on the microcontroller, so do not prefix them with `mp `. See the definitions of the functions in [edukit_pc.py](edukit_pc.py) for more details on their operation.
 
 ## Control
-In the file `
+In the file [edukit_mp.py](edukit_mp.py) the controller object `pid` is defined, which is given as an argument to the `control` task in the asynchronous function `main()`. The [control](https://github.com/prfraanje/edukit-micropython/blob/008c3d5f00a262ea5f277ed561225889d4ec3746/edukit_mp.py#L92C1-L92C1) function has `controller`, such as the `pid` in `main()`, as argument. In this function you see many references to the dictionary `supervisory` defined in the beginning of [edukit_mp.py](edukit_mp.py).
 
 ## Brief explanation of the main flow of the code
 
