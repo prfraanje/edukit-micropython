@@ -56,7 +56,7 @@ rshell -p COM4 cp urepl.mpy /flash
 Also see `rshell -h` for a short manual on how to use `rshell`.
 
 ## Usage
-- After uploading the mpy- or py-files to the microcontroller, the code can be started on the microcontroller by `import edukit_mp` at the micropython prompt, but that command is given from the Python code `edukit_pc.py` running on the PC. Note, wwhen renaming `edukit_mp.mpy` by `main.mpy`, the code will automatically run on the microcontroller which may, however, lead to big trouble when there are bugs in the serial interface communication, because after each reset the buggy code is started again and the serial interface may not be available by tools such as `rshell`, `mpremote` or `mpfshell` to copy good code and a full re-flashing of the firmware may even be needed. Also note, that micropython gives prevalence to py-files over mpy-files. So if you upload an mpy-file make sure you remove the py-file with the same name from the `/flash` directory in on the micropython board. 
+- After uploading the mpy- or py-files to the microcontroller, the code can be started on the microcontroller by `import edukit_mp` at the micropython prompt, but that command is given from the Python code (edukit_pc.py) running on the PC. Note, when renaming `edukit_mp.mpy` by `main.mpy`, the code will automatically run on the microcontroller which may, however, lead to big trouble when there are bugs in the serial interface communication, because after each reset the buggy code is started again and the serial interface may not be available by tools such as `rshell`, `mpremote` or `mpfshell` to copy good code and a full re-flashing of the firmware may even be needed. Also note, that micropython gives prevalence to py-files over mpy-files. So if you upload an mpy-file make sure you remove the py-file with the same name from the `/flash` directory in on the micropython board. 
 - Before proceeding, open `edukit_pc.py` (note the subscript `_pc` indicating it runs on the PC) and scroll downwards almost at the end of the file within the statement `if __name__ == "__main__"` and make sure the variable `serial_port` has the correct name of the serial-port of the microcontroller on your operating system (e.g. `COM4` on Windows, `/dev/ttyACM0` or `/dev/ttyUSB0` on Linux).
 - After that, from the command line or from your Python IDE run the code `edukit_pc.py:
 ```
@@ -127,7 +127,7 @@ await set_pid(0.001,0.0,0.0001,1)
 Note, these functions are (initially) evaluated on the PC, though they lead to evaluations on the microcontroller, so do not prefix them with `mp `. See the definitions of the functions in `edukit_pc.py` for more details on their operation.
 
 ## Control
-
+In the file `
 
 ## Brief explanation of the main flow of the code
 
