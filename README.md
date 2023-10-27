@@ -14,7 +14,7 @@
 ```
 %LOCALAPPDATA%\Programs\Python\Python312\Lib\site-packages\pyreadline\py3k_compat.py
 ```
-and change `collections.Callable` on line 8 into `collections.abc.Callable`. Also see the [post](https://stackoverflow.com/questions/69515086/error-attributeerror-collections-has-no-attribute-callable-using-beautifu) on StackOverflow.
+and change `collections.Callable` on line 8 into `collections.abc.Callable`. Also see this [post](https://stackoverflow.com/questions/69515086/error-attributeerror-collections-has-no-attribute-callable-using-beautifu) on StackOverflow.
 
 ## Installation
 - Download micropython 1.20.0 [firmware for the Nucleo-F401RE](https://micropython.org/download/NUCLEO_F401RE/), note the version! If you select another version, you need to re-crosscompile the py-files into mpy-files with the `mpy-cross` tool, or stick to working with the less efficient py-files instead of the byte-compiled and optimized mpy-files. Connect the Nucleo-F401RE with embedded ST-Link programmer to your PC or laptop (in the following we say PC when laptop can be read as well) with the micro-usb cable. The Nucleo-F401RE device may directly be recognized as a USB mass storage device, and copy the firmware to this USB mass storage device. Then the embedded ST-Link programmer will continue to program the Nucleo-F401RE, and it will reboot into micropython. You may also press the black reset button on the Nucleo board to reset the board manually.
@@ -126,11 +126,16 @@ await set_pid(0.001,0.0,0.0001,1)
 ```
 Note, these functions are (initially) evaluated on the PC, though they lead to evaluations on the microcontroller, so do not prefix them with `mp `. See the definitions of the functions in [edukit_pc.py](edukit_pc.py) for more details on their operation.
 
-## Control
-In the file [edukit_mp.py](edukit_mp.py) the controller object `pid` is defined, which is given as an argument to the `control` task in the asynchronous function `main()`. The [control](https://github.com/prfraanje/edukit-micropython/blob/008c3d5f00a262ea5f277ed561225889d4ec3746/edukit_mp.py#L92C1-L92C1) function has `controller`, such as the `pid` in `main()`, as argument. In this function you see many references to the dictionary `supervisory` defined in the beginning of [edukit_mp.py](edukit_mp.py).
+## Introduction to the control code 
+In the file [edukit_mp.py](edukit_mp.py) the controller object `pid` is defined, which is given as an argument to the `control` task in the asynchronous function `main()`. The [control](https://github.com/prfraanje/edukit-micropython/blob/008c3d5f00a262ea5f277ed561225889d4ec3746/edukit_mp.py#L92C1-L92C1) function has `controller`, such as the `pid` in `main()`, as argument.
+
+https://github.com/prfraanje/edukit-micropython/blob/008c3d5f00a262ea5f277ed561225889d4ec3746/edukit_mp.py#L92C1-L92C
+
+In this function you see many references to the dictionary `supervisory` defined in the beginning of [edukit_mp.py](edukit_mp.py).
+
 
 ## Brief explanation of the main flow of the code
 
 
-## Changing the micropython code
+## Changing and cross-compiling the micropython code
 
