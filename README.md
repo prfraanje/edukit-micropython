@@ -17,7 +17,9 @@
 and change `collections.Callable` on line 8 into `collections.abc.Callable`. Also see this [post](https://stackoverflow.com/questions/69515086/error-attributeerror-collections-has-no-attribute-callable-using-beautifu) on StackOverflow.
 
 ## Installation
-- Download micropython 1.20.0 [firmware for the Nucleo-F401RE](https://micropython.org/download/NUCLEO_F401RE/), note the version! If you select another version, you need to re-crosscompile the py-files into mpy-files with the `mpy-cross` tool, or stick to working with the less efficient py-files instead of the byte-compiled and optimized mpy-files. Connect the Nucleo-F401RE with embedded ST-Link programmer to your PC or laptop (in the following we say PC when laptop can be read as well) with the micro-usb cable. The Nucleo-F401RE device may directly be recognized as a USB mass storage device, and copy the firmware to this USB mass storage device. Then the embedded ST-Link programmer will continue to program the Nucleo-F401RE, and it will reboot into micropython. You may also press the black reset button on the Nucleo board to reset the board manually.
+- Download micropython 1.20.0 [firmware for the Nucleo-F401RE](https://micropython.org/download/NUCLEO_F401RE/) (we recommend to proceed with the hex-file), note the version! If you select another version, you need to re-crosscompile the py-files into mpy-files with the `mpy-cross` tool, or stick to working with the less efficient py-files instead of the byte-compiled and optimized mpy-files. 
+- Only needed on Windows: Download and install the [STSW-LINK009](https://www.st.com/en/development-tools/stsw-link009.html) ST-LINK, ST-LINK/V2, ST-LINK/V2-1, STLINK-V3 USB driver signed for Windows7, Windows8, Windows10 from ST Microsystems. Download and install the [STM32CubeProg](https://www.st.com/en/development-tools/stm32cubeprog.html) STM32CubeProgrammer software for all STM32. Program the Nucleo-F401RE microcontroller with the micropython 1.20.0 firmware (hex-file).
+- Only needed on Linux: Connect the Nucleo-F401RE with embedded ST-Link programmer to your PC or laptop (in the following we say PC when laptop can be read as well) with the micro-usb cable. The Nucleo-F401RE device may directly be recognized as a USB mass storage device, and copy the firmware (hex-file) to this USB mass storage device. Then the embedded ST-Link programmer will continue to program the Nucleo-F401RE, and it will reboot into micropython. You may also press the black reset button on the Nucleo board to reset the board manually.
 - If you have not installed Python on your PC install it, and make sure you have the commands `python` and `pip` available at the [command line](https://en.wikipedia.org/wiki/Command-line_interface) (cmd or powershell in Windows, bash or zsh in Linux or Mac). For Windows you may consult [this guide](https://docs.python.org/3/using/windows.html), and if you use the python distribution from (https://python.org) make sure you select the option to add the location of `python.exe` to your `PATH`.
 - At the command line (in the following we refer to command line when referring to cmd or powershell in Windows and a terminal running e.g. bash in Linux or Mac), and install aioserial for the current user with the following command:
 ```
@@ -76,7 +78,7 @@ atan2(3,4)
 mp from math import *
 mp atan2(3,4)
 ```
-Note, that only single line commands are allowed, so you can enter
+Note, that only single line commands are allowed (the REPL is not a multi-line input REPL is the standard for Python REPL's), so you can enter
 ```
 for _ in range(10): print("Hello, from Python on PC!')
 mp for _ in range(10): print("Hello, from Micropython on the microcontroller!')
@@ -88,7 +90,7 @@ for _ in range(10):
 mp for _ in range(10):
 mp    print("Hello, from Micropython on the microcontroller!')
 ```
-You can try, but you will get an exception. Exceptions are fed back to the user, but you can continue using the `-> ` REPL.
+You can try, but you will get an exception. Exceptions are fed back to the user, but you can continue using the `-> ` REPL. If you really want to have a multi-line REPL, fork and adjust the code, e.g. by replacing the `ainput` function by the `prompt_async` function in the PromptSession class of [python-prompt-toolkit]https://github.com/prompt-toolkit/python-prompt-toolkit), see [asyncio-prompt.py](https://github.com/prompt-toolkit/python-prompt-toolkit/blob/master/examples/prompts/asyncio-prompt.py).
 
 ## Control
 The edukit has two sensor values (see the function `get_both_sensors()` in [edukit_mp.py](edukit_mp.py) that are the input to the dynamic feedback controller. The first one is the number of microsteps of the stepper-motor (for details see the function `get_abs_pos_efficient` in the file [uL6474.py](uL6474.py)) and the encoder value that measures the angle of the pendulum (for details see the definition of the `Encoder` object `enc` in [edukit_mp.py](edukit_mp.py) and the definition of the `Encoder` class in [uencoder.py](uencoder.py)). You can obtain these values, e.g., by entering
@@ -127,16 +129,19 @@ await set_pid(0.001,0.0,0.0001,1)
 Note, these functions are (initially) evaluated on the PC, though they lead to evaluations on the microcontroller, so do not prefix them with `mp `. See the definitions of the functions in [edukit_pc.py](edukit_pc.py) for more details on their operation.
 
 ## Introduction to the control code 
-In the file [edukit_mp.py](edukit_mp.py) the controller object `pid` is defined, which is given as an argument to the `control` task in the asynchronous function `main()`. The [control](https://github.com/prfraanje/edukit-micropython/blob/008c3d5f00a262ea5f277ed561225889d4ec3746/edukit_mp.py#L92C1-L92C1) function has `controller`, such as the `pid` in `main()`, as argument.
+In the file [edukit_mp.py](edukit_mp.py) the controller object `pid` is defined (using the `PID2` class defined in [ucontroller.py](ucontroller.py)), which is given as an argument to the `control` task in the asynchronous function `main()`. The [control](https://github.com/prfraanje/edukit-micropython/blob/008c3d5f00a262ea5f277ed561225889d4ec3746/edukit_mp.py#L92C1-L92C1) function has `controller`, such as the `pid` in `main()`, as argument.
 
 https://github.com/prfraanje/edukit-micropython/blob/a35ed6c27966aff251406618f62f111b2bf783a2/edukit_mp.py#L92-L109
 
 
-In this function you see many references to the dictionary `supervisory` defined in the beginning of [edukit_mp.py](edukit_mp.py).
+In this function you see many references to the dictionary `supervisory` defined in the beginning of [edukit_mp.py](edukit_mp.py), that gives room for various supervisory control flags and data acquisition.
 
+https://github.com/prfraanje/edukit-micropython/blob/a35ed6c27966aff251406618f62f111b2bf783a2/edukit_mp.py#L28-L46
+
+The `lock` is currently not used, but can be used when there is a risk of two asynchronous tasks that inentendedly change values in the dictionary almost simultaneously. The 'counter' is a value increased every sampling instant, i.e., every iteration through the loop `while supervisory['control']` in the async function `control`. The value of `supervisory['control']` is a Boolean that is usually `True` but can be set to `False` to end the `control` task. For example this is done in the `repl` function in [urepl.py](urepl.py), when it receives the string `b'stop'` while reading streams from standard input.
 
 ## Brief explanation of the main flow of the code
 
 
 ## Changing and cross-compiling the micropython code
-
+[Compile micropython and tools, and deploy for STM32 boards](https://github.com/micropython/micropython/tree/master/ports/stm32) such as `BOARD=NUCLEO_F401RE`.
