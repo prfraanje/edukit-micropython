@@ -2,7 +2,7 @@
 [Micropython](https://micropython.org) and [Python](https://www.python.org) based control framework for the [Edukit Rotary Inverted Pendulum Control System](https://sites.google.com/view/ucla-st-motor-control/home) developed by ST Microsystems and UCLA. The micropython code is written for the STMicrosystem [Nucleo-F401RE](https://www.st.com/en/evaluation-tools/nucleo-f401re.html) the STMicrosystem [X-Nucleo IHM01A1](https://www.st.com/en/ecosystems/x-nucleo-ihm01a1.html) stepper motor board based on the [L6474](https://www.st.com/en/motor-drivers/l6474.html) stepper motor driver, that comes with the [STEVAL-EDUKIT](https://www.st.com/en/evaluation-tools/steval-edukit01.html), but can be adapted for other hardware as well.
 
 ## Dependencies
-- [Micropython](https://micropython.org) [firmware for Nucleo-F401RE](https://micropython.org/download/NUCLEO_F401RE/) and [mpy-cross](https://gitlab.com/alelec/mpy_cross) tool, tested with version 1.20.0, both should have same version!
+- [Micropython](https://micropython.org) [firmware for Nucleo-F401RE](https://micropython.org/download/NUCLEO_F401RE/) and [mpy-cross](https://gitlab.com/alelec/mpy_cross) tool, tested with version 1.21.0, both should have same version!
 - [Python](https://www.python.org), tested with version 3.10
 - [aioserial](https://pypi.org/project/aioserial/), tested with version 1.3.1 (needed for nonblocking asynchronous communication with the serial interface at the python side)
 - [numpy](https://numpy.org/), tested with version 1.21.5, this dependency is not a strong one and may be replaced by lists or array.array objects.
@@ -17,7 +17,7 @@
 and change `collections.Callable` on line 8 into `collections.abc.Callable`. Also see this [post](https://stackoverflow.com/questions/69515086/error-attributeerror-collections-has-no-attribute-callable-using-beautifu) on StackOverflow.
 
 ## Installation
-- Download micropython 1.20.0 [firmware for the Nucleo-F401RE](https://micropython.org/download/NUCLEO_F401RE/), select the hex-file, because it can be programmed directly by the ST-Link programmer that is on-board of the Nucleo board. Note the version! If you select another version, you need to re-crosscompile the py-files into mpy-files with the `mpy-cross` tool, or stick to working with the less efficient py-files instead of the byte-compiled and optimized mpy-files.
+- Download micropython 1.21.0 [firmware for the Nucleo-F401RE](https://micropython.org/download/NUCLEO_F401RE/), select the hex-file, because it can be programmed directly by the ST-Link programmer that is on-board of the Nucleo board. Note the version! If you select another version, you need to re-crosscompile the py-files into mpy-files with the `mpy-cross` tool, or stick to working with the less efficient py-files instead of the byte-compiled and optimized mpy-files.
 - This step is only needed on Windows, for programming micropython on the Nucleo-board: Download and install the [STSW-LINK009](https://www.st.com/en/development-tools/stsw-link009.html) ST-LINK, ST-LINK/V2, ST-LINK/V2-1, STLINK-V3 USB driver signed for Windows7, Windows8, Windows10 from ST Microsystems.
 - Connect the Nucleo-F401RE with embedded ST-Link programmer to your PC or laptop (in the following we say PC when laptop can be read as well) with the micro-usb cable. The Nucleo-F401RE device may directly be recognized as a USB mass storage device, and copy the firmware (hex-file!) to this USB mass storage device. Then the embedded ST-Link programmer will continue to program the Nucleo-F401RE, and it will reboot into micropython. You may also press the black reset button on the Nucleo board to reset the board manually.
 - If you have difficulty on Windows to flash the micropython firmware on the Nucleo board, you may want to use [STM32CubeProg](https://www.st.com/en/development-tools/stm32cubeprog.html) STM32CubeProgrammer software for all STM32, to program the Nucleo board.
@@ -44,21 +44,13 @@ On Windows you may want to remove the options `--user` so that the `rshell` is d
 ```
 rshell -l
 ```
-- Clone or download the py- and mpy-files, at the command line go to the directory (or folder) where the files are stored and copy the mpy files to the `/flash` directory on the Nucleo-F401RE:
+- Clone or download the py- and mpy-files, at the command line go to the directory (or folder) where the files are stored and copy the mpy files to the `/flash` directory on the Nucleo-F401RE (e.g. on Linux, note you may need to specify the serial-port):
 ```
-rshell cp edukit_mp.mpy /flash
-rshell cp ucontroller.mpy /flash
-rshell cp uencoder.mpy /flash
-rshell cp uL6474.mpy /flash
-rshell cp urepl.mpy /flash
+rshell -p /dev/ttyACM0 cp *.mpy /flash/
 ```
-Note, if this is not working, you may need to specify the serial port, e.g. by
+or on Windows
 ```
-rshell -p COM4 cp edukit_mp.mpy /flash
-rshell -p COM4 cp ucontroller.mpy /flash
-rshell -p COM4 cp uencoder.mpy /flash
-rshell -p COM4 cp uL6474.mpy /flash
-rshell -p COM4 cp urepl.mpy /flash
+rshell -p COM4 cp *.mpy /flash/
 ```
 Recall, you are encouraged to consult `rshell -h` for a short manual on how to use `rshell`.
 
