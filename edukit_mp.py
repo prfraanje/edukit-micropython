@@ -116,11 +116,12 @@ async def main():
     control_task = asyncio.create_task(control(pid))
 
     # put repl_task at end, because it will cancel the other tasks on exit
-    repl_task = asyncio.create_task(repl(globals(),[control_task]))
+    #repl_task = asyncio.create_task(repl(globals(),[control_task]))
     
     # Start the aiorepl task.
     #repl = asyncio.create_task(aiorepl.task(globals()))
-    await asyncio.gather(control_task, repl_task)
+    #await asyncio.gather(control_task, repl_task)
+    await asyncio.gather(control_task)    
 
 
 #if __name__ == '__main__':
