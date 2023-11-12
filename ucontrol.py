@@ -156,17 +156,18 @@ class PID2():
         self.y2_prev = self.y[1]        
         self.y = self.get_sensor()
         self.y1_diff = self.y[0] - self.y1_prev
-        self.y2_diff = self.y[1] - self.y2_prev        
+        self.y2_diff = self.y[1] - self.y2_prev
+        supervis = self.supervisory
         #async with self.supervisory['lock']:
-        if self.supervisory['reference_add']:
-            if self.supervisory['reference_counter'] >= self.supervisory['reference_num_samples']:
-                if not self.supervisory['reference_repeat']:
-                    self.supervisory['reference_add'] = False
-                self.supervisory['reference_counter'] = 0
-                self.e1 = self.r1 - self.y[0]                
+        if supervis['reference_add']:
+            if supervis['reference_counter'] >= supervis['reference_num_samples']:
+                if not supervis['reference_repeat']:
+                    supervis['reference_add'] = False
+                supervis['reference_counter'] = 0
+                self.e1 = self.r1 + supervis['reference_sequence'][supervis['reference_counter']] - self.y[0]                
             else:
-                self.e1 = self.r1 + self.supervisory['reference_sequence'][self.supervisory['reference_counter']] - self.y[0]
-                self.supervisory['reference_counter'] += 1
+                self.e1 = self.r1 + supervis['reference_sequence'][supervis['reference_counter']] - self.y[0]
+                supervis['reference_counter'] += 1
         else:
             self.e1 = self.r1 - self.y[0]
 
@@ -186,24 +187,24 @@ class PID2():
 
                 self.u += self.Kp2 * self.e2 + self.Ki2 * self.e2_sum - self.Kd2 * self.y2_diff  # do not take feedback of derivative in reference (!)
 
-        #async with self.supervisory['lock']:
-        if self.supervisory['control_add']:
-            if self.supervisory['control_counter'] >= self.supervisory['control_num_samples']:
-                if not self.supervisory['control_repeat']:
-                    self.supervisory['control_add'] = False
-                    self.supervisory['control_counter'] = 0
+        #async with supervis['lock']:
+        if supervis['control_add']:
+            if supervis['control_counter'] >= supervis['control_num_samples']:
+                if not supervis['control_repeat']:
+                    supervis['control_add'] = False
+                    supervis['control_counter'] = 0
                     self.set_actuator(self.u)
                     self.sample[2] = self.u
                 else:
-                    self.supervisory['control_counter'] = 0
-                    self.set_actuator(self.u + self.supervisory['control_sequence'][self.supervisory['control_counter']])
-                    self.sample[2] = self.u + self.supervisory['control_sequence'][self.supervisory['control_counter']]
-                    self.supervisory['control_counter'] += 1                    
+                    supervis['control_counter'] = 0
+                    self.set_actuator(self.u + supervis['control_sequence'][supervis['control_counter']])
+                    self.sample[2] = self.u + supervis['control_sequence'][supervis['control_counter']]
+                    supervis['control_counter'] += 1                    
                     
             else:
-                self.set_actuator(self.u + self.supervisory['control_sequence'][self.supervisory['control_counter']])
-                self.sample[2] = self.u + self.supervisory['control_sequence'][self.supervisory['control_counter']]
-                self.supervisory['control_counter'] += 1
+                self.set_actuator(self.u + supervis['control_sequence'][supervis['control_counter']])
+                self.sample[2] = self.u + supervis['control_sequence'][supervis['control_counter']]
+                supervis['control_counter'] += 1
         else:
             self.set_actuator(self.u)
             self.sample[2] = self.u

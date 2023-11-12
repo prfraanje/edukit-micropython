@@ -1,6 +1,5 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-import ast
 import time
 import aioserial
 from multiprocessing import Process, Queue, queues
@@ -55,7 +54,7 @@ async def plotter(ser,namespace,plot_queue,async_sleep_time_for_CTS=0.01):
     while namespace['plotter_conf']['do_plotter'] == True:
         try:
             resp = await ser_eval(ser,command,async_sleep_time_for_CTS)
-            last_sample[:] = np.float64(ast.literal_eval(resp))                    
+            last_sample[:] = np.float64(eval(resp))                    
             try:
                 #plot_queue.put_nowait(last_sample)
                 plot_queue.put(last_sample) # block until there is space in the queue, no reason to proceed if queue is full
@@ -64,7 +63,8 @@ async def plotter(ser,namespace,plot_queue,async_sleep_time_for_CTS=0.01):
                 pass
         except:
             pass
-        await asyncio.sleep(0.1)
+        await asyncio.sleep(0.1) # get data 10 times per sec
+        
     plot_queue.put(Sentinel()) # send the sentinel to inform plot_process to stop
     print('Stopping plotter')
 
@@ -107,7 +107,7 @@ def plot_process(plot_queue):
 
     
 async def ser_eval(ser,command,async_sleep_time_for_CTS=0.01):
-    resp = ''
+    resp = b''
     async with ser.lock:
         ser.reset_output_buffer()
         ser.reset_input_buffer()
@@ -118,20 +118,20 @@ async def ser_eval(ser,command,async_sleep_time_for_CTS=0.01):
         await ser.write_async(command_byte)
         ser.flush()
         #print('after flush')
-        resp = await ser.read_async(ser.in_waiting)
+        resp += await ser.read_async(ser.in_waiting)
         #print('received resp = ',resp.decode('utf-8'))
         if len(resp)>=len(end_pattern):
             pattern = resp[-len(end_pattern):]
         else:
             pattern = b''
-        while not pattern == end_pattern:
+        while not (pattern == end_pattern):
             if ser.in_waiting > 1:
                 resp += await ser.read_async(ser.in_waiting)
             else:
                 resp += await ser.read_async(1)
             if len(resp)>=len(end_pattern):
                 pattern = resp[-len(end_pattern):]
-    return resp[:-len(end_pattern)].decode('utf-8')
+    return resp[:-len(end_pattern)].decode('utf-8').lstrip()
 
 
 # non-blocking keyboard input, from https://gist.github.com/delivrance/675a4295ce7dc70f0ce0b164fcdbd798
@@ -141,7 +141,7 @@ async def ainput(prompt: str = "") -> str:
 
 async def repl(ser,namespace):
     do_repl = True
-    print('Enter "stop" to exit,\nprefix command with "mp " to evaluate on micropython.')
+    print('Enter "stop" to exit,\nprefix command with "mp " to evaluate on micropython.\nNB: The asynchronous serial communication is not always reliable, commands may be lost!\nAlso note, that the microcontroller has limited memory, and uses garbage control to free memory. Especially with large objects such as lists and arrays this can be problematic.\n')
     global _
     while do_repl:
         command = await ainput('-> ')
@@ -149,20 +149,21 @@ async def repl(ser,namespace):
             do_repl = False
             namespace['plotter_conf']['do_plotter'] = False # stop plotter
             result = await ser_eval(ser,'stop')
-            print('stopping mp return: ',result)
+            print('stopping mp return:',result)
             break
         elif command[0:3] == 'mp ':
             result = await ser_eval(ser,command[3:])
+            result = result.rstrip() # rstrip to remove white space such as \r, \n
             if not (result == 'None'):
                 if (result[0:9] == "Exception"): # Exceptions should not be evaluated as in _ = eval(result) below
-                    print('mp return: ',result[9:])
+                    print('mp return:',result[9:])
                 else:
-                    print('mp return: ',result)
-                    try:
-                        _ = eval(result)
-                        print("result available in _")
-                    except:
-                        pass
+                    print('mp return:',result)
+                    #try:
+                    #    _ = eval(result)
+                    #    print("result available in _")
+                    #except:
+                    #    pass
         elif command[0:6] == "await ":
             try:
                 result = await eval(command[6:],namespace)
@@ -227,7 +228,7 @@ async def set_pid(Kp,Ki,Kd,channel=None):
     
 
 if __name__ == "__main__":
-    serial_port = "COM4"   # "/dev/ttyACM0"
+    serial_port = "/dev/ttyACM0"
     baudrate    = 115200
     #timeout     = 0.1
     _ = None

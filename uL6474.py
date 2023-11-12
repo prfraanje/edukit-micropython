@@ -1,5 +1,5 @@
 from micropython import const
-from machine import SoftSPI, Pin
+from machine import SPI, Pin
 from pyb import Timer, freq
 import pyb
 
@@ -64,8 +64,8 @@ pwm_tim = pyb.Timer(3,period=200,prescaler=0x1a3) # scales clock to 100 kHz (10 
                                             # which is 10 usteps / ms
 ch = pwm_tim.channel(2,pyb.Timer.PWM,pin=pyb.Pin.board.D9,pulse_width_percent=50)
 
-spi = SoftSPI(polarity=1,phase=0,baudrate=L6474_instructions['SPI_FREQ'],sck=IHM01A1_pins['SPI_SCK_pin'],mosi=IHM01A1_pins['SPI_MOSI_pin'],
-              miso=IHM01A1_pins['SPI_MISO_pin'],firstbit=SoftSPI.MSB)
+spi = SPI(id=1,polarity=1,phase=1,baudrate=L6474_instructions['SPI_FREQ'],sck=IHM01A1_pins['SPI_SCK_pin'],mosi=IHM01A1_pins['SPI_MOSI_pin'],
+              miso=IHM01A1_pins['SPI_MISO_pin'],firstbit=SPI.MSB)
 
 
 def binformat(int_value):
@@ -107,8 +107,10 @@ def spi_send_receive(txdata):
 
 
 def get_status():
-    txdata = int2bytes(L6474_instructions['GET_STATUS'],1)
-    txdata += int2bytes(L6474_instructions['NOP'],1) * L6474_registers['STATUS']['num_bytes']
+    #txdata = int2bytes(L6474_instructions['GET_STATUS'],1)
+    #txdata += int2bytes(L6474_instructions['NOP'],1) * L6474_registers['STATUS']['num_bytes']
+    txdata = int2bytes(0xd,1)
+    txdata += b'\x00\x00' 
     rxdata = spi_send_receive(txdata)
     return bytes2int(rxdata)
 
