@@ -5,7 +5,9 @@ import aioserial
 from multiprocessing import Process, Queue, queues
 import matplotlib.pyplot as plt
 import numpy as np
+import rlcompleter
 import readline
+readline.parse_and_bind("tab: complete")
 
 end_pattern = b'\r\n<-> '
 
@@ -142,7 +144,7 @@ async def ainput(prompt: str = "") -> str:
 
 def edukit_help():
     print("""
-Help on edikit-micropython
+Help on edukit-micropython
 ==========================
 To be written
     """)
@@ -154,7 +156,7 @@ Enter "stop" to exit.
 Prefix command with "mp " to evaluate on micropython.
 NB: The asynchronous serial communication is not always reliable, commands may be lost!
 Note, that the microcontroller has limited memory, and uses garbage control to free memory. Especially with large objects such as lists and arrays this can be problematic.
-Arrow-up can be used to go back in the history of previous input.
+Arrow-up can be used to go back in the history of previous input. Tab-completion is supported, but (unfortunately) not for "mp " prefixed code.
 Enter "edukit_help()" for further help and examples.
 """)
     global _
