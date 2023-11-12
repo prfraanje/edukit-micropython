@@ -5,6 +5,7 @@ import aioserial
 from multiprocessing import Process, Queue, queues
 import matplotlib.pyplot as plt
 import numpy as np
+import readline
 
 end_pattern = b'\r\n<-> '
 
@@ -139,9 +140,23 @@ async def ainput(prompt: str = "") -> str:
     with ThreadPoolExecutor(1, "AsyncInput") as executor:
         return await asyncio.get_event_loop().run_in_executor(executor, input, prompt)
 
+def edukit_help():
+    print("""
+Help on edikit-micropython
+==========================
+To be written
+    """)
+    
 async def repl(ser,namespace):
     do_repl = True
-    print('Enter "stop" to exit,\nprefix command with "mp " to evaluate on micropython.\nNB: The asynchronous serial communication is not always reliable, commands may be lost!\nAlso note, that the microcontroller has limited memory, and uses garbage control to free memory. Especially with large objects such as lists and arrays this can be problematic.\n')
+    print("""
+Enter "stop" to exit.
+Prefix command with "mp " to evaluate on micropython.
+NB: The asynchronous serial communication is not always reliable, commands may be lost!
+Note, that the microcontroller has limited memory, and uses garbage control to free memory. Especially with large objects such as lists and arrays this can be problematic.
+Arrow-up can be used to go back in the history of previous input.
+Enter "edukit_help()" for further help and examples.
+""")
     global _
     while do_repl:
         command = await ainput('-> ')
