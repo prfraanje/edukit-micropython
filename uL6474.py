@@ -1,5 +1,5 @@
 from micropython import const
-from machine import SoftSPI, Pin
+from machine import SPI, Pin
 from pyb import Timer, freq
 import pyb
 
@@ -58,19 +58,22 @@ flag      = Pin(IHM01A1_pins['FLAG_pin'], Pin.IN, Pin.PULL_UP)
 reset     = Pin(IHM01A1_pins['STBY_RESET_pin'], mode=Pin.OUT, value=HIGH)
 cs        = Pin(IHM01A1_pins['SPI_CS_pin'], mode=Pin.OUT, value=HIGH)
 direction = Pin(IHM01A1_pins['DIR_pin'], mode=Pin.OUT, value=HIGH)     
-pwm_tim = pyb.Timer(3,period=200,prescaler=0x1a3) # scales clock to 100 kHz (10 us)
+tim       = pyb.Timer(3,period=200,prescaler=0x1a3) # scales clock to 100 kHz (10 us)
 #pwm_tim = Timer(3,period=200,prescaler=41) # scales clock to 1000 kHz (1 us)
                                             # if period = 100, then 1 ustep every 100 * 1e-6 s
                                             # which is 10 usteps / ms
-ch = pwm_tim.channel(2,pyb.Timer.PWM,pin=pyb.Pin.board.D9,pulse_width_percent=50)
+ch = tim.channel(2,pyb.Timer.OC_TOGGLE,pin=pyb.Pin.board.D9)
 
 #spi = SPI(1,polarity=1,phase=0,baudrate=L6474_instructions['SPI_FREQ'],sck=IHM01A1_pins['SPI_SCK_pin'],mosi=IHM01A1_pins['SPI_MOSI_pin'],miso=IHM01A1_pins['SPI_MISO_pin'],firstbit=SPI.MSB)
 #spi = SPI(1,polarity=1,phase=1,baudrate=L6474_instructions['SPI_FREQ'],firstbit=SPI.MSB)
 
 #spi = SPI(id=1,polarity=1,phase=1,baudrate=L6474_instructions['SPI_FREQ'],firstbit=SPI.MSB)
 
-spi = SoftSPI(polarity=1,phase=1,baudrate=L6474_instructions['SPI_FREQ'],sck=IHM01A1_pins['SPI_SCK_pin'],mosi=IHM01A1_pins['SPI_MOSI_pin'],miso=IHM01A1_pins['SPI_MISO_pin'],firstbit=SoftSPI.MSB)
-#
+#spi = SoftSPI(polarity=1,phase=1,baudrate=L6474_instructions['SPI_FREQ'],sck=IHM01A1_pins['SPI_SCK_pin'],mosi=IHM01A1_pins['SPI_MOSI_pin'],miso=IHM01A1_pins['SPI_MISO_pin'],firstbit=SoftSPI.MSB)
+
+spi = SPI(1)
+spi.init(polarity=1,phase=1,baudrate=L6474_instructions['SPI_FREQ'],firstbit=SPI.MSB)
+
 
 def binformat(int_value):
     if 0 << int_value & int_value < 2**8:

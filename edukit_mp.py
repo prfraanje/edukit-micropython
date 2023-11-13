@@ -55,16 +55,16 @@ supervisory['control_num_samples'] = supervisory['record_num_samples']
 supervisory['control_sequence'] = array.array('f',[0. for _ in range(supervisory['control_num_samples'])])
 
 
-def set_pwm_direction(control):
+def set_period_direction(control):
     if control == 0.:
-        pwm_tim.period(100000)        
+        tim.period(100000)        
         if direction.value() == 0:
             direction.value(1)
         else:
             direction.value(0)
     else:
         if abs(control)<1:
-            pwm_tim.period(10000)
+            tim.period(10000)
             if control<0:
                 period = -10000
             else:
@@ -72,12 +72,11 @@ def set_pwm_direction(control):
         else:
             period = round(10000./(control))
             if abs(period) < 1:
-                pwm_tim.period(1)
+                tim.period(1)
             elif abs(period) < 10000:
-                pwm_tim.period(abs(period))
+                tim.period(abs(period))
             else:
-                pwm_tim.period(10000)
-
+                tim.period(10000)
         if period<0:
             direction.value(0)
         else:
@@ -88,8 +87,8 @@ def get_both_sensors():
     enc_value = enc.value()
     return [steps, enc_value]
 
-#pid = PID(get_both_sensors,set_pwm_direction,ctrlparam['sampling_time_ms'],ctrlparam['Kp'],ctrlparam['Ki'],ctrlparam['Kd'],0.,0.,0.,2**16,False,supervisory)
-pid = PID2(get_both_sensors,set_pwm_direction,ctrlparam['sampling_time_ms'],ctrlparam['Kp1'],ctrlparam['Ki1'],ctrlparam['Kd1'],ctrlparam['Kp2'],ctrlparam['Ki2'],ctrlparam['Kd2'],0,0,0,0,0,0,2**16,2**16,False,True,True,supervisory)
+#pid = PID(get_both_sensors,set_period_direction,ctrlparam['sampling_time_ms'],ctrlparam['Kp'],ctrlparam['Ki'],ctrlparam['Kd'],0.,0.,0.,2**16,False,supervisory)
+pid = PID2(get_both_sensors,set_period_direction,ctrlparam['sampling_time_ms'],ctrlparam['Kp1'],ctrlparam['Ki1'],ctrlparam['Kd1'],ctrlparam['Kp2'],ctrlparam['Ki2'],ctrlparam['Kd2'],0,0,0,0,0,0,2**16,2**16,False,True,True,supervisory)
 
 def set_control_sequence(std_noise=0.,height1=0.,height2=0.,duration=100):
     for i in range(supervisory['control_num_samples']):
@@ -145,8 +144,8 @@ async def main():
 # startup
 
 # D4 en D5
-Encoder_A_pin = 'D4' # pin 6 on CN5 = PB4 STM pin, pin 27 on CN10, 
-Encoder_B_pin = 'D5' # pin 5 on CN5 = PB5 STM pin, pin 29 on CN10
+Encoder_A_pin = 'D5' # pin 6 on CN5 = PB4 STM pin, pin 27 on CN10, 
+Encoder_B_pin = 'D4' # pin 5 on CN5 = PB5 STM pin, pin 29 on CN10
 enc_A = Pin(Encoder_A_pin,Pin.IN,Pin.PULL_UP)
 enc_B = Pin(Encoder_B_pin,Pin.IN,Pin.PULL_UP)
 enc = Encoder(enc_A,enc_B)
@@ -158,7 +157,7 @@ set_reference_sequence(0.,20.,-20.,100)
 set_default()
 # enable L6474
 enable()
-set_pwm_direction(0)
+set_period_direction(0)
 # run tasks
 asyncio.run(main())
 
