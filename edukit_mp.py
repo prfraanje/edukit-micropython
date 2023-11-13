@@ -1,6 +1,6 @@
 import micropython
 from micropython import const
-from machine import SoftSPI, Pin
+from machine import Pin
 from pyb import Timer, freq
 from time import sleep_ms, sleep_us, ticks_us
 from random import random
