@@ -25,7 +25,7 @@ L6474_registers = {
     'ABS_POS'   : {'addr': 0x01, 'signed': True, 'num_bits': 22, 'num_bytes': 3, 'reset': 0x0, 'default': 0x0},
     'EL_POS'    : {'addr': 0x02, 'signed': False,  'num_bits': 9, 'num_bytes': 2, 'reset': 0x0, 'default': 0x0},
     'MARK'      : {'addr': 0x03, 'signed': True,  'num_bits': 22, 'num_bytes': 3, 'reset': 0x0, 'default': 0x0},
-    'TVAL'      : {'addr': 0x09, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x18}, #0x18 = 0.78125 A
+    'TVAL'      : {'addr': 0x09, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x18}, #0x18 = 0.78125 A (0.8 A, 12 V is maximum according to UM2717 guide of STM)
     'T_FAST'    : {'addr': 0x0E, 'signed': False, 'num_bits': 8, 'num_bytes': 1, 'reset': 0x19, 'default': 0x19},
     'TON_MIN'   : {'addr': 0x0F, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x29},
     'TOFF_MIN'  : {'addr': 0x10, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x29},
