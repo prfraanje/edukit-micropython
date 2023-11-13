@@ -1,15 +1,18 @@
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-import time
-import aioserial
 from multiprocessing import Process, Queue, queues
+import sys
+import time
+
+import aioserial
 import matplotlib.pyplot as plt
 import numpy as np
+
 import rlcompleter
 import readline
 readline.parse_and_bind("tab: complete")
 
-end_pattern = b'\r\n<-> '
+END_PATTERN = b'\r\n<-> '
 
 class Sentinel():
     """Sentinel class for sending stop signal over e.g. a queue.
@@ -123,18 +126,18 @@ async def ser_eval(ser,command,async_sleep_time_for_CTS=0.01):
         #print('after flush')
         resp += await ser.read_async(ser.in_waiting)
         #print('received resp = ',resp.decode('utf-8'))
-        if len(resp)>=len(end_pattern):
-            pattern = resp[-len(end_pattern):]
+        if len(resp)>=len(END_PATTERN):
+            pattern = resp[-len(END_PATTERN):]
         else:
             pattern = b''
-        while not (pattern == end_pattern):
+        while not (pattern == END_PATTERN):
             if ser.in_waiting > 1:
                 resp += await ser.read_async(ser.in_waiting)
             else:
                 resp += await ser.read_async(1)
-            if len(resp)>=len(end_pattern):
-                pattern = resp[-len(end_pattern):]
-    return resp[:-len(end_pattern)].decode('utf-8').lstrip()
+            if len(resp)>=len(END_PATTERN):
+                pattern = resp[-len(END_PATTERN):]
+    return resp[:-len(END_PATTERN)].decode('utf-8').lstrip()
 
 
 # non-blocking keyboard input, from https://gist.github.com/delivrance/675a4295ce7dc70f0ce0b164fcdbd798
@@ -245,7 +248,7 @@ async def set_pid(Kp,Ki,Kd,channel=None):
     
 
 if __name__ == "__main__":
-    serial_port = "/dev/ttyACM0"
+    serial_port = "COM4" if sys.platform == "win32" else "/dev/ttyACM0"
     baudrate    = 115200
     #timeout     = 0.1
     _ = None

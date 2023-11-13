@@ -145,8 +145,8 @@ async def main():
 # startup
 
 # D4 en D5
-Encoder_A_pin = 'D5' # pin 6 on CN5 = PB4 STM pin, pin 27 on CN10, 
-Encoder_B_pin = 'D4' # pin 5 on CN5 = PB5 STM pin, pin 29 on CN10
+Encoder_A_pin = 'D4' # pin 6 on CN5 = PB4 STM pin, pin 27 on CN10, 
+Encoder_B_pin = 'D5' # pin 5 on CN5 = PB5 STM pin, pin 29 on CN10
 enc_A = Pin(Encoder_A_pin,Pin.IN,Pin.PULL_UP)
 enc_B = Pin(Encoder_B_pin,Pin.IN,Pin.PULL_UP)
 enc = Encoder(enc_A,enc_B)
