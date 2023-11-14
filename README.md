@@ -33,7 +33,7 @@ The module `aioserial` is needed to enable non-blocking serial communication bet
 pip install --user numpy
 pip install --user matplotlib
 ```
-- Install rhsell (mpfshell and mpremote can be installed similarly):
+- Install `rhsell` (`mpfshell` and mpremote can be installed similarly):
 ```
 pip install --user rshell
 ```
@@ -44,6 +44,7 @@ On Windows you may want to remove the options `--user` so that the `rshell` is d
 ```
 rshell -l
 ```
+If you have problems, make sure the `rshell` script is known at the command line. You may need to add `%LOCALAPPDATA%\Roaming\Python\Python312\Scripts\` (or similar!) directory to your `PATH`, see a few points back. On windows, you also may suffer from the bug in `pyreadline`, see above under [Fix bug in pyreadline on Windows to be able to use rshell](README.md#fix-bug-in-pyreadline-on-windows-to-be-able-to-use-rshell).
 - Clone or download the py- and mpy-files, at the command line go to the directory (or folder) where the files are stored and copy the mpy files to the `/flash` directory on the Nucleo-F401RE (e.g. on Linux, note you may need to specify the serial-port):
 ```
 rshell -p /dev/ttyACM0 cp *.mpy /flash/
@@ -141,4 +142,18 @@ The `lock` is currently not used, but can be used when there is a risk of two as
 
 
 ## Changing and cross-compiling the micropython code
-[Compile micropython and tools, and deploy for STM32 boards](https://github.com/micropython/micropython/tree/master/ports/stm32) such as `BOARD=NUCLEO_F401RE`.
+If you change the code for the microcontroller, you should recompile the corresponding `mpy` file. You can do this with the tool `mpy-cross`. Install it with `pip`:
+```
+pip install --user mpy-cross
+```
+Then, e.g. if you change `ucontrol.py` regenerate the byte-code in `ucontrol.mpy` with, executing at the command line
+```
+mpy-cross -march=armv7emsp ucontrol.py
+```
+If you have multiple files that need to be compiled, execute the command for every file separately. You may also add optimization flags such as `-O2` or `-O3`, at the expense of the loss of informative feedback of errors. For more information, see the help: `mpy-cross --help` and online documentation such as [MicroPython .mpy files](https://docs.micropython.org/en/latest/reference/mpyfiles.html#).
+
+Do not forget  to upload the new `.mpy` files to the microcontroller, e.g. by
+```
+rshell -p COM4 cp ucontrol.mpy /flash/
+```
+Note, that if you go for advanced stuff in maximizing for speed using the "Native" or "Viper" code emitters, as explained [here](https://docs.micropython.org/en/latest/reference/speed_python.html) you may need to compile `mpy-cross` and `micropython` yourself, such that they completely corresponds with the same version and microcontroller architecture. For more information see e.g. [MicroPython port to STM32 MCUs](https://github.com/micropython/micropython/tree/master/ports/stm32) at the micropython github. 

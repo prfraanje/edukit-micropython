@@ -73,7 +73,7 @@ class PID():
                 self.set_actuator(self.u)
             else:
                 self.set_actuator(self.u + self.supervisory['control_sequence'][self.supervisory['control_counter']])
-                supervisory['control_counter'] += 1
+                self.supervisory['control_counter'] += 1
         else:
             self.set_actuator(self.u)
 
