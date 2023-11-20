@@ -120,6 +120,9 @@ async def ser_eval(ser,command,async_sleep_time_for_CTS=0.01):
         ser.reset_output_buffer()
         ser.reset_input_buffer()
         #ser.setRTS(True) # does not work on Windows
+        # next line: do not append \r\n: causes unreliable communication or
+        # command execution with micropython, so only append \n
+        # confirmed both on Linux and Windows
         command_byte = (command+'\n').encode('utf-8') # extend with C-n)
         #while not ser.getCTS(): # does not work on Windows
         #    await asyncio.sleep(async_sleep_time_for_CTS)
