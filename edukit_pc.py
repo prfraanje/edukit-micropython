@@ -13,6 +13,8 @@ import readline
 readline.parse_and_bind("tab: complete")
 
 END_PATTERN = b'\r\n<-> '
+import logging
+logging.getLogger("asyncio").setLevel(logging.WARNING)
 
 class Sentinel():
     """Sentinel class for sending stop signal over e.g. a queue.
@@ -113,12 +115,12 @@ def plot_process(plot_queue):
 
     
 async def ser_eval(ser,command,async_sleep_time_for_CTS=0.01):
-    resp = b''
     async with ser.lock:
+        resp = b''
         ser.reset_output_buffer()
         ser.reset_input_buffer()
         #ser.setRTS(True) # does not work on Windows
-        command_byte = (command+'\r\n').encode('utf-8') # extend with C-n)
+        command_byte = (command+'\n').encode('utf-8') # extend with C-n)
         #while not ser.getCTS(): # does not work on Windows
         #    await asyncio.sleep(async_sleep_time_for_CTS)
         await ser.write_async(command_byte)
@@ -272,7 +274,7 @@ if __name__ == "__main__":
     ser.reset_output_buffer()
     ser.reset_input_buffer()
     plot_p.start() # start plotter process
-    asyncio.run(main(ser,globals(),plot_queue)) # start async tasks
+    asyncio.run(main(ser,globals(),plot_queue),debug=True) # start async tasks
     ser.write(b'\x04\r\n') # after completing tasks, reset micropython board
     ser.flush()
     ser.reset_output_buffer()

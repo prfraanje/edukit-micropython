@@ -3,6 +3,7 @@ import sys
 import micropython
 import gc
 
+
 # simplified version of aiorepl by https://github.com/micropython/micropython-lib/blob/master/micropython/aiorepl/aiorepl.py
 async def repl(namespace=None,tasks_to_cancel_on_stop=[]):
     END_PATTERN = const(b'\r\n<-> ')
@@ -39,7 +40,10 @@ async def repl(namespace=None,tasks_to_cancel_on_stop=[]):
             #res = str(eval(cmd,namespace))
             print(eval(cmd,namespace))
             await stream_out.awrite(END_PATTERN)
-            gc.collect()
+            #await asyncio.sleep_ms(2)
+            #print("",end="")
+            #print('\r\n',end="")
+            #print('<-> ',end="")
             # if not (res == "None"):
             #     for i in range(len(res)//BUF_SIZE+1):
             #         if (i+1)*BUF_SIZE<len(res):
@@ -54,7 +58,6 @@ async def repl(namespace=None,tasks_to_cancel_on_stop=[]):
                 #res = str(exec(cmd,namespace))
                 exec(cmd,namespace)
                 await stream_out.awrite(END_PATTERN)                
-                gc.collect()                
                 # if not (res == "None"):
                 #     for i in range(len(res)//BUF_SIZE+1):
                 #         if (i+1)*BUF_SIZE<len(res):
