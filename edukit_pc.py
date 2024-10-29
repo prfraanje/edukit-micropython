@@ -3,6 +3,7 @@ from concurrent.futures import ThreadPoolExecutor
 from multiprocessing import Process, Queue, queues
 import sys
 import time
+import serial.tools.list_ports as list_ports
 
 import aioserial
 import matplotlib.pyplot as plt
@@ -253,7 +254,9 @@ async def set_pid(Kp,Ki,Kd,channel=None):
     
 
 if __name__ == "__main__":
-    serial_port = "COM4" if sys.platform == "win32" else "/dev/ttyACM0"
+    #serial_port = "COM4" if sys.platform == "win32" else "/dev/ttyACM0"
+    ports_avail = list_ports.comports()
+    serial_port = [ports_avail[i].device for i in range(len(ports_avail)) if ports_avail[i].manufacturer=='STMicroelectronics'][0]
     baudrate    = 115200
     #timeout     = 0.1
     _ = None
