@@ -75,6 +75,7 @@ spi = SPI(1)
 spi.init(polarity=1,phase=1,baudrate=L6474_instructions['SPI_FREQ'],firstbit=SPI.MSB)
 
 
+#@micropython.native
 def binformat(int_value):
     if 0 << int_value & int_value < 2**8:
         return f'{int_value:08b}'
@@ -85,6 +86,7 @@ def binformat(int_value):
     else:
         return f'{int_value:b}'
 
+#@micropython.native
 def bytes2int(bytes_,signed=False):
     val = int.from_bytes(bytes_,ENDIANNES,False)
     if signed and (val & L6474_instructions['ABS_POS_SIGN_BIT_MASK']):
@@ -92,12 +94,13 @@ def bytes2int(bytes_,signed=False):
     else:
         return val            
 
+#@micropython.native    
 def int2bytes(value,number_of_bytes,signed=False):
     if signed and (value < 0):
         value += 2*L6474_instructions['ABS_POS_SIGN_BIT_MASK']
     return value.to_bytes(number_of_bytes,ENDIANNES,False)        
 
-
+#@micropython.native
 def spi_send_receive(txdata):
     rxdata = bytearray(len(txdata))
     tx_ = memoryview(txdata)
@@ -113,6 +116,7 @@ def spi_send_receive(txdata):
     return rxdata[1:]
 
 
+#@micropython.native
 def get_status():
     txdata = int2bytes(L6474_instructions['GET_STATUS'],1)
     txdata += int2bytes(L6474_instructions['NOP'],1) * L6474_registers['STATUS']['num_bytes']
@@ -121,12 +125,14 @@ def get_status():
     rxdata = spi_send_receive(txdata)
     return bytes2int(rxdata)
 
+#@micropython.native
 def enable():
     cs.value(LOW)
     spi.write(int2bytes(L6474_instructions['ENABLE'],1))
     cs.value(HIGH)
     sleep_us(L6474_instructions['RESPONSE_DELAY_us'])
 
+#@micropython.native
 def disable():
     cs.value(LOW)
     spi.write(int2bytes(L6474_instructions['DISABLE'],1))
@@ -134,6 +140,7 @@ def disable():
     sleep_us(L6474_instructions['RESPONSE_DELAY_us'])
 
 
+#@micropython.native
 def get_param(param='ABS_POS'):
     #param = param.upper()
     txdata = bytes([L6474_instructions['GET_PARAM'] | L6474_registers[param]['addr']]) + int2bytes(L6474_instructions['NOP'],1)*L6474_registers[param]['num_bytes']
@@ -148,6 +155,7 @@ spi_rxdata_abs_pos = bytearray(4)               # mutable
 tx = memoryview(spi_txdata_abs_pos)
 rx = memoryview(spi_rxdata_abs_pos)
 
+#@micropython.native
 def get_abs_pos_efficient():
     # for i in range(4): # consider loop unrolling
     #     cs.value(LOW)
@@ -180,6 +188,7 @@ def get_abs_pos_efficient():
 
 
     
+#@micropython.native
 def set_param(param,value):
     param = param.upper()
     byte_values = int2bytes(value,L6474_registers[param]['num_bytes'],signed=L6474_registers[param]['signed'])
@@ -190,6 +199,7 @@ def set_param(param,value):
     rxdata = spi_send_receive(txdata)
     return bytes2int(rxdata,signed=L6474_registers[param]['signed'])
     
+#@micropython.native
 def set_default():
     ret = 0
     for reg in L6474_registers:
@@ -200,6 +210,7 @@ def set_default():
             ret += res
     return ret
 
+#@micropython.native
 def pulse(number=1):
     # speed is about 1 pulse in 38.039 us
     flag = False
