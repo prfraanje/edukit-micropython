@@ -1,8 +1,6 @@
 from micropython import const
-from machine import SPI, Pin
-from pyb import Timer, freq
-import pyb
-
+from machine import SPI, Pin, freq
+from pyb import Timer # this Timer class is more complete than the one in machine
 from time import sleep_ms, sleep_us, ticks_us
 
 LOW = const(0)
@@ -28,7 +26,9 @@ GET_STATUS        = const(b'\xd0')
 ENABLE            = const(b'\xb8')
 DISABLE           = const(b'\xa8')
 GET_PARAM         = const(b'\x20')
+GET_PARAM_int     = const(0x20)
 SET_PARAM         = const(b'\x00')
+SET_PARAM_int     = const(0x00)
 ABS_POS_SIGN_BIT_MASK = const(0x200000)  # =2**21
 ABS_POS_SIGN_TERM     = const(0x400000)
 spi_txdata_abs_pos = const(b'\x21\x00\x00\x00') # immutable
@@ -87,11 +87,11 @@ flag      = Pin(FLAG_pin, Pin.IN, Pin.PULL_UP)
 reset     = Pin(STBY_RESET_pin, mode=Pin.OUT, value=HIGH)
 cs        = Pin(SPI_CS_pin, mode=Pin.OUT, value=HIGH)
 direction = Pin(DIR_pin, mode=Pin.OUT, value=HIGH)     
-tim       = pyb.Timer(3,period=200,prescaler=0x1a3) # scales clock to 100 kHz (10 us)
+tim       = Timer(3,period=200,prescaler=0x1a3) # scales clock to 100 kHz (10 us)
 #pwm_tim = Timer(3,period=200,prescaler=41) # scales clock to 1000 kHz (1 us)
                                             # if period = 100, then 1 ustep every 100 * 1e-6 s
                                             # which is 10 usteps / ms
-ch = tim.channel(2,pyb.Timer.OC_TOGGLE,pin=pyb.Pin.board.D9)
+ch = tim.channel(2,Timer.OC_TOGGLE,pin=Pin.board.D9)
 
 
 spi = SPI(1)
@@ -167,62 +167,62 @@ def disable():
 #@micropython.native
 def get_param(param='ABS_POS'):
     if param == 'ABS_POS':
-        addr = b'\x01'
+        addr_int = 0x01
         num_bytes = 3
         signed = True
     elif param == 'EL_POS':
-        addr = b'\x02'
+        addr_int = 0x02
         num_bytes = 2
         signed = False
     elif param == 'MARK':
-        addr = b'\x03'
+        addr_int = 0x03
         num_bytes = 3
         signed = True
     elif param == 'TVAL':
-        addr = b'\x09'
+        addr_int = 0x09
         num_bytes = 1
         signed = False
     elif param == 'T_FAST':
-        addr = b'\x0E'
+        addr_int = 0x0E
         num_bytes = 1
     elif param == 'TON_MIN':
-        addr = b'\x0F'
+        addr_int = 0x0F
         num_bytes = 1
         signed = False
     elif param == 'TOFF_MIN':
-        addr = b'\x10'
+        addr_int = 0x10
         num_bytes = 1
         signed = False
     elif param == 'ADC_OUT':
-        addr = b'\x12'
+        addr_int = 0x12
         num_bytes = 1
         signed = False
     elif param == 'OCD_TH':
-        addr = b'\x13'
+        addr_int = 0x13
         num_bytes = 1
         signed = False
     elif param == 'STEP_MODE':
-        addr = b'\x16'
+        addr_int = 0x16
         num_bytes = 1
         signed = False
     elif param == 'ALARM_EN':
-        addr = b'\x17'
+        addr_int = 0x17
         num_bytes = 1
         signed = False
     elif param == 'ALARM_EN':
-        addr = b'\x17'
+        addr_int = 0x17
         num_bytes = 1
         signed = False
     elif param == 'CONFIG':
-        addr = b'\x18'
+        addr_int = 0x18
         num_bytes = 2
         signed = False
     else: # param == 'STATUS':
-        addr = b'\x17'
+        addr_int = 0x17
         num_bytes = 2
         signed = False
         
-    txdata = GET_PARAM | addr + NOP*num_bytes
+    txdata = int2bytes(GET_PARAM_int | addr_int,1) + NOP*num_bytes
     rxdata = spi_send_receive(txdata)
     return bytes2int(rxdata,signed=signed)
 
@@ -265,58 +265,58 @@ def get_abs_pos_efficient():
 def set_param(param,value):
     param = param.upper()
     if param == 'ABS_POS':
-        addr = b'\x01'
+        addr_int = 0x01
         num_bytes = 3
         signed = True
     elif param == 'EL_POS':
-        addr = b'\x02'
+        addr_int = 0x02
         num_bytes = 2
         signed = False
     elif param == 'MARK':
-        addr = b'\x03'
+        addr_int = 0x03
         num_bytes = 3
         signed = True
     elif param == 'TVAL':
-        addr = b'\x09'
+        addr_int = 0x09
         num_bytes = 1
         signed = False
     elif param == 'T_FAST':
-        addr = b'\x0E'
+        addr_int = 0x0E
         num_bytes = 1
     elif param == 'TON_MIN':
-        addr = b'\x0F'
+        addr_int = 0x0F
         num_bytes = 1
         signed = False
     elif param == 'TOFF_MIN':
-        addr = b'\x10'
+        addr_int = 0x10
         num_bytes = 1
         signed = False
     elif param == 'ADC_OUT':
-        addr = b'\x12'
+        addr_int = 0x12
         num_bytes = 1
         signed = False
     elif param == 'OCD_TH':
-        addr = b'\x13'
+        addr_int = 0x13
         num_bytes = 1
         signed = False
     elif param == 'STEP_MODE':
-        addr = b'\x16'
+        addr_int = 0x16
         num_bytes = 1
         signed = False
     elif param == 'ALARM_EN':
-        addr = b'\x17'
+        addr_int = 0x17
         num_bytes = 1
         signed = False
     elif param == 'ALARM_EN':
-        addr = b'\x17'
+        addr_int = 0x17
         num_bytes = 1
         signed = False
     elif param == 'CONFIG':
-        addr = b'\x18'
+        addr_int = 0x18
         num_bytes = 2
         signed = False
     else: # param == 'STATUS':
-        addr = b'\x17'
+        addr_int = 0x17
         num_bytes = 2
         signed = False
     
@@ -324,7 +324,7 @@ def set_param(param,value):
     check_value = bytes2int(byte_values,signed=signed)
     if check_value != value:
         raise ValueError(f'value ({value}) cannot be properly converted to binary data.')
-    txdata = SET_PARAM | addr + byte_values
+    txdata = int2bytes(SET_PARAM_int | addr_int,1) + byte_values
     rxdata = spi_send_receive(txdata)
     return bytes2int(rxdata,signed=signed)
     
@@ -338,6 +338,42 @@ def set_param(param,value):
 #             #print(f'register {reg} set to {value}, response is {res}')
 #             ret += res
 #     return ret
+
+def set_default():
+    ret = 0
+    ret += set_param('ABS_POS',0x0)
+    ret += set_param('EL_POS',0x0)
+    ret += set_param('MARK',0x0)
+    ret += set_param('TVAL',0x18)    
+    ret += set_param('T_FAST',0x17) # was 0x18
+    ret += set_param('TON_MIN',0x29)
+    ret += set_param('TOFF_MIN',0x29)
+    #ret += set_param('ADC_OUT','')
+    ret += set_param('OCD_TH',0x2)
+    ret += set_param('STEP_MODE',0xF)
+    ret += set_param('ALARM_EN',0xFF)
+    ret += set_param('CONFIG',0x2E88)
+    #ret += set_param('ALARM_EN','')    
+    
+    return ret
+
+
+# L6474_registers = {
+#     'ABS_POS'   : {'addr': 0x01, 'signed': True, 'num_bits': 22, 'num_bytes': 3, 'reset': 0x0, 'default': 0x0},
+#     'EL_POS'    : {'addr': 0x02, 'signed': False,  'num_bits': 9, 'num_bytes': 2, 'reset': 0x0, 'default': 0x0},
+#     'MARK'      : {'addr': 0x03, 'signed': True,  'num_bits': 22, 'num_bytes': 3, 'reset': 0x0, 'default': 0x0},
+#     'TVAL'      : {'addr': 0x09, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x18}, #0x18 = 0.78125 A (0.8 A, 12 V is maximum according to UM2717 guide of STM)
+#     'T_FAST'    : {'addr': 0x0E, 'signed': False, 'num_bits': 8, 'num_bytes': 1, 'reset': 0x19, 'default': 0x19},
+#     'TON_MIN'   : {'addr': 0x0F, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x29},
+#     'TOFF_MIN'  : {'addr': 0x10, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x29},
+#     'ADC_OUT'   : {'addr': 0x12, 'signed': False, 'num_bits': 5, 'num_bytes': 1, 'reset': '', 'default': ''},
+#     'OCD_TH'    : {'addr': 0x13, 'signed': False, 'num_bits': 4, 'num_bytes': 1, 'reset': 0x8, 'default': 0x2}, #0x2 = 1.125 A
+#     'STEP_MODE' : {'addr': 0x16, 'signed': False, 'num_bits': 8, 'num_bytes': 1, 'reset': 0x7, 'default': 0xF}, #x0f = 0b00001111, 16 bit microstepping
+#     'ALARM_EN'  : {'addr': 0x17, 'signed': False, 'num_bits': 8, 'num_bytes': 1, 'reset': 0xFF, 'default': 0xFF},
+#     'CONFIG'    : {'addr': 0x18, 'signed': False, 'num_bits': 16, 'num_bytes': 2, 'reset': 0x2E88, 'default': 0x2E88},
+#     'STATUS'    : {'addr': 0x19, 'signed': False, 'num_bits': 16, 'num_bytes': 2, 'reset': '', 'default': ''},
+#     }
+
 
 # #@micropython.native
 # def pulse(number=1):
@@ -357,12 +393,12 @@ def set_param(param,value):
 #def set_speed(usteps_per_second):
 #    number,rest = divmod(
 
-def measure_uticks(N=1000):
-    t0 = ticks_us()
-    for i in range(1):
-        pulse(N)
-    t1 = ticks_us()
-    return (t1-t0)/N
+# def measure_uticks(N=1000):
+#     t0 = ticks_us()
+#     for i in range(1):
+#         pulse(N)
+#     t1 = ticks_us()
+#     return (t1-t0)/N
 
 
 def set_period_direction(control):

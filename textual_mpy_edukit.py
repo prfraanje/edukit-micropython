@@ -1,14 +1,16 @@
 #!/bin/env python3
 
+from array import array
 import asyncio
 from collections import deque
+import logging
+logging.getLogger("asyncio").setLevel(logging.WARNING)
+import math
 import re
 import serial.tools.list_ports as list_ports
 import sys
 import time
 
-import logging
-logging.getLogger("asyncio").setLevel(logging.WARNING)
 
 import aioserial
 
@@ -23,7 +25,6 @@ from textual.suggester import SuggestFromList
 
 from textual_plotext import PlotextPlot
 
-import math
 
 END_PATTERN = b'\x04'
 #END_PATTERN = b'<->\r\n '
@@ -39,13 +40,14 @@ class TimeDisplay(Static):
         global app
         self.start_time = time.monotonic()
         MAXLEN=300
-        self.plots_history = [deque([0.]*MAXLEN,maxlen=MAXLEN),deque([0.]*MAXLEN,maxlen=MAXLEN)]
+        self.plot_history = [deque([0.]*MAXLEN,maxlen=MAXLEN),deque([0.]*MAXLEN,maxlen=MAXLEN),deque([0.]*MAXLEN,maxlen=MAXLEN)]
         super(TimeDisplay,self).__init__(*args,**kwargs)
     
     def on_mount(self) -> None:
         """Event handler called when widget is added to the app."""
         #self.plots = [app.query_one('#plot1'), app.query_one('#plot2')]
-        self.plots = [app.query_one('#plot')]
+        self.plot_output = [app.query_one('#plot_output')]
+        self.plot_input = [app.query_one('#plot_input')]        
         self.update_timer = self.set_interval(1 / 20, self.update_time)
 
     async def update_time(self) -> None:
@@ -55,21 +57,17 @@ class TimeDisplay(Static):
 
     async def update_plots(self):
         global micropython_serial_interface
-        #resp = await serial_eval(micropython_serial_interface,'sample')
-        resp = None
-        data = [math.sin(2*math.pi*.25*self.time), math.sin(2*math.pi*.5*self.time)]
-        if resp is not None:
-            if len(resp)>11:
-                if resp[0:11] != 'Exception: ':
-                    data = resp
-            else:
-                data = resp
+        resp = await serial_eval(micropython_serial_interface,'pid.sample')
+        data = resp
             
-        for i in range(2): self.plots_history[i].append(data[i])
-        self.plots[0].plt.clear_data()
-        self.plots[0].plt.scatter(self.plots_history[0],yside='left',label='plot1',marker='fhd')
-        self.plots[0].plt.scatter(self.plots_history[1],yside='right',label='plot2',marker='fhd')
-        self.plots[0].refresh()
+        for i in range(len(data)): self.plot_history[i].append(data[i])
+        self.plot_output[0].plt.clear_data()
+        self.plot_output[0].plt.scatter(self.plot_history[0],yside='left',label='stepper steps',marker='fhd')
+        self.plot_output[0].plt.scatter(self.plot_history[1],yside='right',label='encoder ticks',marker='fhd')
+        self.plot_output[0].refresh()
+        self.plot_input[0].plt.clear_data()
+        self.plot_input[0].plt.scatter(self.plot_history[2],yside='left',label='control',marker='fhd')
+        self.plot_input[0].refresh()
         
 
     def watch_time(self, time: float) -> None:
@@ -81,9 +79,9 @@ class TimeDisplay(Static):
 
 
 class IDE(App):
-    TITLE = "My Python IDE"
-    SUB_TITLE = "Experiment"
-    CSS_PATH = "my_python_ide.css"
+    TITLE = "Edukit Pendulum Control"
+    SUB_TITLE = "with micropython and textual"
+    CSS_PATH = "textual_mpy_edukit.css"
     BINDINGS = [
         ("d", "toggle_dark", "Toggle dark mode"),
         ("p", "toggle_update_plots","Toggle update plots"),
@@ -100,7 +98,8 @@ class IDE(App):
             with Vertical(id='middle_bar'): # middle bar, plots and repl's
                 #yield Label("Press Ctrl+Z tot suspend.")
                 yield TimeDisplay(id='timer_plots')
-                yield PlotextPlot(id='plot')
+                yield PlotextPlot(id='plot_output')
+                yield PlotextPlot(id='plot_input')
                 with Horizontal():
                     with Vertical():
                         yield RichLog(highlight=True,markup=True,auto_scroll=True,max_lines=1000,id="python_output")
@@ -110,20 +109,43 @@ class IDE(App):
                         yield RichLog(highlight=True,markup=True,auto_scroll=True,max_lines=1000,id="micropython_output")
                         yield Input(placeholder="MicroPython prompt",id="micropython_input",suggester=SuggestFromList(completions))
             with Vertical(id='right_bar'): # right bar, micropython buttons
-                yield RadioButton('pid2.run')
-                yield RadioButton('pid2.run1')
-                yield RadioButton('pid2.run2')                                
+                yield RadioButton('pid.run',value=False,id='pid_run')
+                yield RadioButton('pid.run1',value=True,id='pid_run1')
+                yield RadioButton('pid.run2',value=True,id='pid_run2')                                
                 
 
     def on_mount(self):
         self.query_one("#python_output").can_focus=False
         self.query_one("#micropython_output").can_focus=False
 
-        plt = self.query_one('#plot').plt
-        plt.title("Plot") # to apply a title
+        plt1 = self.query_one('#plot_output').plt
+        plt1.title("Plot output (stepper steps and encoder ticks)") # to apply a title
+        plt2 = self.query_one('#plot_input').plt
+        plt2.title("Plot input (control)") # to apply a title
+        
         #plt2 = self.query_one('#plot2').plt
         #plt2.title("Plot2") # to apply a title
 
+    @on(RadioButton.Changed)
+    async def handle_radiobuttons(self, event: RadioButton.Changed) -> None:
+        global micropython_serial_interface
+        button_id = event.radio_button.id
+        if button_id == 'pid_run':
+            button = 'pid.run'
+        elif button_id == 'pid_run1':
+            button = 'pid.run1'
+        elif button_id == 'pid_run2':
+            button = 'pid.run2'
+        else:
+            return None
+            
+        if event.value == True:
+            val = "True"
+        else:
+            val = "False"
+        await serial_eval(micropython_serial_interface, button + '='+val)
+
+        
 
     @on(Input.Submitted,"#python_input")
     async def handle_python_input(self, event: Input.Submitted) -> None:
@@ -232,7 +254,6 @@ async def serial_eval(serial_interface,command,END_PATTERN=b'\x04'):
         response = resp[:-(len(END_PATTERN))].decode('utf-8')
         if response == '':
             response = None
-    print('response = ',response)
     if (response is None):
         return response
     if len(response)>11:
@@ -262,11 +283,11 @@ if __name__ == '__main__':
     ser.flush()
     ser.write(b'\x01') # Ctrl-A leave repl mode
     ser.reset_input_buffer()
-    startup_cmd = 'import mymp'.encode('utf-8') + b'\r\n' + b'\x04'  # note it is imported, rather than executed by exec, because its a mpy file
+    startup_cmd = 'import mpy_edukit'.encode('utf-8') + b'\r\n' + b'\x04'  # note it is imported, rather than executed by exec, because its a mpy file
     ser.write(startup_cmd)                   # run edukit program on micropython board
     ser.flush()
     time.sleep(0.5) # wait for edukit to start up
-    serial_eval(ser,'enc.value(0)')
+    #serial_eval(ser,'enc.value(0)')
     
     ser.reset_output_buffer()
     ser.reset_input_buffer()

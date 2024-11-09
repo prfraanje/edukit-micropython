@@ -82,7 +82,7 @@ class TimeDisplay(Static):
 class IDE(App):
     TITLE = "My Python IDE"
     SUB_TITLE = "Experiment"
-    CSS_PATH = "my_python_ide.css"
+    CSS_PATH = "textual_mpy_repl_example.css"
     BINDINGS = [
         ("d", "toggle_dark", "Toggle dark mode"),
         ("p", "toggle_update_plots","Toggle update plots"),
@@ -252,8 +252,8 @@ if __name__ == '__main__':
     
     #serial_port = "COM4" if sys.platform == "win32" else "/dev/ttyACM0"
     ports_avail = list_ports.comports()
-    #serial_port = [port.device for port in ports_avail if port.manufacturer=='STMicroelectronics'][0]
-    serial_port = '/dev/ttyACM0'
+    serial_port = [port.device for port in ports_avail if port.manufacturer=='STMicroelectronics'][0]
+    #serial_port = '/dev/ttyACM0'
     baudrate    = 115200
     ser = aioserial.AioSerial(port=serial_port,baudrate=baudrate)
     micropython_serial_interface = ser
@@ -264,7 +264,7 @@ if __name__ == '__main__':
     ser.flush()
     ser.write(b'\x01') # Ctrl-A leave repl mode
     ser.reset_input_buffer()
-    startup_cmd = 'import mymp'.encode('utf-8') + b'\r\n' + b'\x04'  # note it is imported, rather than executed by exec, because its a mpy file
+    startup_cmd = 'import mpy_repl_example'.encode('utf-8') + b'\r\n' + b'\x04'  # note it is imported, rather than executed by exec, because its a mpy file
     ser.write(startup_cmd)                   # run edukit program on micropython board
     ser.flush()
     time.sleep(0.5) # wait for edukit to start up

@@ -10,7 +10,7 @@ import array
 import asyncio
 
 from uencoder import Encoder
-from ucontrol import PID2
+from ucontrol import PID
 from uL6474 import *
 from urepl import repl
 
@@ -55,8 +55,6 @@ supervisory['control_num_samples'] = supervisory['record_num_samples']
 supervisory['control_sequence'] = array.array('f',[0. for _ in range(supervisory['control_num_samples'])])
 
 
-pid = PID2(get_both_sensors,set_period_direction,ctrlparam['sampling_time_ms'],ctrlparam['Kp1'],ctrlparam['Ki1'],ctrlparam['Kd1'],ctrlparam['Kp2'],ctrlparam['Ki2'],ctrlparam['Kd2'],0,0,0,0,0,0,2**16,2**16,False,True,True,supervisory)
-
 
 
 def set_control_sequence(std_noise=0.,height1=0.,height2=0.,duration=100):
@@ -73,6 +71,13 @@ def set_reference_sequence(std_noise=0.,height1=0.,height2=0.,duration=100):
         else:
             supervisory['reference_sequence'][i] = 1.*height2 + std_noise*random()
 
+
+def get_both_sensors():
+    steps = get_abs_pos_efficient() #get_param()
+    enc_value = enc.value()
+    return [steps, enc_value]
+
+            
             
 async def control(controller):
     while supervisory['control']:
@@ -93,16 +98,15 @@ async def control(controller):
 
         await asyncio.sleep_ms(controller.sampling_time_ms)
 
-def get_both_sensors():
-    steps = get_abs_pos_efficient() #get_param()
-    enc_value = enc.value()
-    return [steps, enc_value]
+
+
+pid = PID(get_both_sensors,set_period_direction,ctrlparam['sampling_time_ms'],ctrlparam['Kp1'],ctrlparam['Ki1'],ctrlparam['Kd1'],ctrlparam['Kp2'],ctrlparam['Ki2'],ctrlparam['Kd2'],0,0,0,0,0,0,2**16,2**16,False,True,True,supervisory)
 
         
 async def main():
     control_task = asyncio.create_task(control(pid))
     # put repl_task at end, because it will cancel the other tasks on exit
-    repl_task = asyncio.create_task(repl(globals(),[control_task]))
+    repl_task = asyncio.create_task(repl(globals()))
     await asyncio.gather(control_task, repl_task)
     
     

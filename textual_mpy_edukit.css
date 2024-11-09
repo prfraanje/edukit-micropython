@@ -1,0 +1,27 @@
+Screen {
+    background: $background;
+    color: $text;
+}
+
+
+
+#left_bar {
+    width: 1fr;
+}
+
+#middle_bar {
+    width: 8fr;
+}
+
+#right_bar {
+    width: 1fr;
+}
+
+
+#plot_output {
+    height: 1fr;
+}
+
+#plot_input {
+    height: 0.5fr;
+}

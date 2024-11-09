@@ -5,7 +5,7 @@ import gc
 
 
 # simplified version of aiorepl by https://github.com/micropython/micropython-lib/blob/master/micropython/aiorepl/aiorepl.py
-async def repl(namespace=None,tasks_to_cancel_on_stop=[]):
+async def repl(namespace=None):
     END_PATTERN = const(b'\x04') #const(b'$@')
     END_PATTERN_LEN = len(END_PATTERN)
     #BUF_SIZE=const(64)
@@ -17,6 +17,7 @@ async def repl(namespace=None,tasks_to_cancel_on_stop=[]):
     stream_out = asyncio.StreamWriter(sys.stdout)
     micropython.kbd_intr(-1) # disable C-c
     while True:
+        gc.collect()
         resp = b''
         b = await stream_in.read(END_PATTERN_LEN)
         resp += b
@@ -30,16 +31,18 @@ async def repl(namespace=None,tasks_to_cancel_on_stop=[]):
             break
         
         try:
-            #gc.collect()
-            await stream_out.awrite(str(eval(cmd,namespace)).encode('utf-8'))
-            await stream_out.awrite(END_PATTERN)
+            stream_out.write(str(eval(cmd,namespace)).encode('utf-8'))
+            stream_out.write(END_PATTERN)
         except: # SyntaxError:
             try:
-                #gc.collect()
                 exec(cmd,namespace)
-                await stream_out.awrite(END_PATTERN)                
+                stream_out.write(END_PATTERN)                
             except Exception as e:
-                await stream_out.awrite(("Exception: "+str(e)).encode('utf-8')+END_PATTERN) # prefix with Exception, so it can be filtered to prevent evaluation
-        #gc.collect()
-        
-    micropython.kbd_intr(3) # enable C-c    
+                stream_out.write(("Exception: "+str(e)).encode('utf-8')+END_PATTERN) # prefix with Exception, so it can be filtered to prevent evaluation
+        await stream_out.drain()        
+
+
+    # stop the controller
+    namespace['supervisory']['control'] = False    
+    micropython.kbd_intr(3) # enable C-c
+    

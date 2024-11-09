@@ -1,6 +1,6 @@
 MPY_HOME = ~/micropython
 MPY_CROSS = $(MPY_HOME)/mpy-cross/build/mpy-cross
-OPT = -march=armv7emsp -X emit=native -v
+OPT = -march=armv7emsp -O3 -X emit=native
 MPREMOTE = $(MPY_HOME)/tools/mpremote/mpremote.py
 
 all: mpy_edukit.mpy  ucontrol.mpy  uencoder.mpy  uL6474.mpy  urepl.mpy mpy_repl_example.mpy
@@ -25,18 +25,18 @@ mpy_repl_example.mpy: mpy_repl_example.py
 	$(MPY_CROSS) $(OPT) -- $<
 
 deploy:
-	$(MPREMOTE) fs cp edukit_mp.mpy :/flash/
-	$(MPREMOTE) fs cp ucontrol.mpy :/flash/
-	$(MPREMOTE) fs cp uencoder.mpy :/flash/
-	$(MPREMOTE) fs cp uL6474.mpy :/flash/
-	$(MPREMOTE) fs cp urepl.mpy :/flash/
+	$(MPREMOTE) fs cp edukit_mp.mpy :
+	$(MPREMOTE) fs cp ucontrol.mpy :
+	$(MPREMOTE) fs cp uencoder.mpy :
+	$(MPREMOTE) fs cp uL6474.mpy :
+	$(MPREMOTE) fs cp urepl.mpy :
 
 erase:
-	$(MPREMOTE) fs rm :/flash/edukit_mp.mpy
-	$(MPREMOTE) fs rm :/flash/ucontrol.mpy
-	$(MPREMOTE) fs rm :/flash/uencoder.mpy
-	$(MPREMOTE) fs rm :/flash/uL6474.mpy
-	$(MPREMOTE) fs rm :/flash/urepl.mpy
+	$(MPREMOTE) fs rm :edukit_mp.mpy
+	$(MPREMOTE) fs rm :ucontrol.mpy
+	$(MPREMOTE) fs rm :uencoder.mpy
+	$(MPREMOTE) fs rm :uL6474.mpy
+	$(MPREMOTE) fs rm :urepl.mpy
 
 clean:
 	rm *.mpy
