@@ -1,4 +1,5 @@
 class PID():
+    #__slots__ = "get_sensor", "set_actuator", "sampling_time_ms", "Kp", "Ki", "Kd", "r", "e_sum", "limit_sum", "limit_sum_flag", "u", "y", "e", "y_diff", "y_prev", "run", "sample", "supervisory"
     def __init__(self,get_sensor,set_actuator,sampling_time_ms,Kp,Ki,Kd,r,e_sum,y_prev,limit_sum,run=False,supervisory={}):
         self.get_sensor = get_sensor
         self.set_actuator = set_actuator
@@ -82,6 +83,7 @@ class PID():
         self.sample[2] = self.u
 
 class PID2():
+    #__slots__ = "get_sensor","set_actuator","sampling_time_ms","Kp1","Ki1","Kd1","Kp2","Ki2","Kd2","r1","r2","e1_sum","e2_sum","y1_prev","y2_prev","limit1_sum","limit2_sum","run","run1","run2","supervisory"
     def __init__(self,get_sensor,set_actuator,sampling_time_ms,Kp1,Ki1,Kd1,Kp2,Ki2,Kd2,r1,r2,e1_sum,e2_sum,y1_prev,y2_prev,limit1_sum,limit2_sum,run=False,run1=True,run2=True,supervisory={}):
         self.get_sensor = get_sensor
         self.set_actuator = set_actuator

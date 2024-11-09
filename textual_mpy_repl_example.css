@@ -1,0 +1,18 @@
+Screen {
+    background: $background;
+    color: $text;
+}
+
+
+
+#left_bar {
+    width: 1fr;
+}
+
+#middle_bar {
+    width: 8fr;
+}
+
+#right_bar {
+    width: 1fr;
+}

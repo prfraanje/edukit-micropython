@@ -1,8 +1,8 @@
 from machine import Pin
 
 class Encoder:
-    def __init__(self, pin_x, pin_y, scale=1):
-        self.scale = scale
+    #__slots__ = "forward", "pin_x", "pin_y", "_x", "_y", "_pos"
+    def __init__(self, pin_x, pin_y):
         self.forward = True
         self.pin_x = pin_x
         self.pin_y = pin_y
@@ -30,8 +30,8 @@ class Encoder:
 
     def position(self, value=None):
         if value is not None:
-            self._pos = round(value / self.scale)  # Improvement provided by @IhorNehrutsa
-        return self._pos * self.scale
+            self._pos = value
+        return self._pos
 
     def value(self, value=None):
         if value is not None:

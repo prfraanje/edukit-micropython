@@ -1,12 +1,12 @@
 MPY_HOME = ~/micropython
 MPY_CROSS = $(MPY_HOME)/mpy-cross/build/mpy-cross
 OPT = -march=armv7emsp -X emit=native -v
-MPREMOTE = $(MPY_HOME)tools/mpremote/mpremote.py
+MPREMOTE = $(MPY_HOME)/tools/mpremote/mpremote.py
 
-all: edukit_mp.mpy  ucontrol.mpy  uencoder.mpy  uL6474.mpy  urepl.mpy
+all: mpy_edukit.mpy  ucontrol.mpy  uencoder.mpy  uL6474.mpy  urepl.mpy mpy_repl_example.mpy
 
 
-edukit_mp.mpy: edukit_mp.py
+mpy_edukit.mpy: mpy_edukit.py
 	$(MPY_CROSS) $(OPT) -- $<
 
 ucontrol.mpy: ucontrol.py
@@ -19,6 +19,9 @@ uL6474.mpy: uL6474.py
 	$(MPY_CROSS) $(OPT) -- $<
 
 urepl.mpy: urepl.py
+	$(MPY_CROSS) $(OPT) -- $<
+
+mpy_repl_example.mpy: mpy_repl_example.py
 	$(MPY_CROSS) $(OPT) -- $<
 
 deploy:
