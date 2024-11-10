@@ -41,8 +41,5 @@ async def repl(namespace=None):
                 stream_out.write(("Exception: "+str(e)).encode('utf-8')+END_PATTERN) # prefix with Exception, so it can be filtered to prevent evaluation
         await stream_out.drain()        
 
-
-    # stop the controller
-    namespace['supervisory']['control'] = False    
     micropython.kbd_intr(3) # enable C-c
     

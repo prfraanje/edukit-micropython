@@ -1,5 +1,4 @@
 class PID():
-    #__slots__ = "get_sensor","set_actuator","sampling_time_ms","Kp1","Ki1","Kd1","Kp2","Ki2","Kd2","r1","r2","e1_sum","e2_sum","y1_prev","y2_prev","limit1_sum","limit2_sum","run","run1","run2","supervisory"
     def __init__(self,get_sensor,set_actuator,sampling_time_ms,Kp1,Ki1,Kd1,Kp2,Ki2,Kd2,r1,r2,e1_sum,e2_sum,y1_prev,y2_prev,limit1_sum,limit2_sum,run=False,run1=True,run2=True,supervisory={}):
         self.get_sensor = get_sensor
         self.set_actuator = set_actuator
@@ -32,6 +31,7 @@ class PID():
         self.sample = [0, 0, 0.]
         self.supervisory = supervisory
  
+    @micropython.native
     def limit(self):
         if self.e1_sum < -self.limit1_sum:
             self.e1_sum = -self.limit1_sum
@@ -68,13 +68,14 @@ class PID():
         self.e2_sum = 0
         self.y2_prev = 0
         self.limit2_sum_flag = False
-            
+
+    @micropython.native
     async def control(self):
         self.y1_prev = self.y[0]
         self.y2_prev = self.y[1]        
         self.y = self.get_sensor()
         self.y1_diff = self.y[0] - self.y1_prev
-        self.y2_diff = self.y[1] - self.y2_prev
+        self.y2_diff = self.y[1] - self.y2_prev        
         supervis = self.supervisory
         #async with self.supervisory['lock']:
         if supervis['reference_add']:

@@ -11,10 +11,21 @@ import asyncio
 
 from uencoder import Encoder
 from ucontrol import PID
-from uL6474 import *
+from uL6474 import L6474
 from urepl import repl
 
 gc.threshold(50000) # total is about 61248
+
+
+stepper = L6474()
+
+# D4 en D5
+Encoder_A_pin = 'D5' # pin 6 on CN5 = PB4 STM pin, pin 27 on CN10, 
+Encoder_B_pin = 'D4' # pin 5 on CN5 = PB5 STM pin, pin 29 on CN10
+enc_A = Pin(Encoder_A_pin,Pin.IN,Pin.PULL_UP)
+enc_B = Pin(Encoder_B_pin,Pin.IN,Pin.PULL_UP)
+encoder = Encoder(enc_A,enc_B)
+
 
 ctrlparam = {}
 ctrlparam['sampling_time_ms'] = 10
@@ -32,7 +43,6 @@ supervisory = {}
 s = supervisory # make alias for easier reference in repl
 supervisory['lock'] = asyncio.Lock()
 supervisory['counter'] = 0
-supervisory['control'] = True # False to stop controller task
 supervisory['record'] = False
 supervisory['record_ready'] = False
 supervisory['record_num_samples'] = 200
@@ -55,8 +65,6 @@ supervisory['control_num_samples'] = supervisory['record_num_samples']
 supervisory['control_sequence'] = array.array('f',[0. for _ in range(supervisory['control_num_samples'])])
 
 
-
-
 def set_control_sequence(std_noise=0.,height1=0.,height2=0.,duration=100):
     for i in range(supervisory['control_num_samples']):
         if i < duration:
@@ -72,15 +80,21 @@ def set_reference_sequence(std_noise=0.,height1=0.,height2=0.,duration=100):
             supervisory['reference_sequence'][i] = 1.*height2 + std_noise*random()
 
 
-def get_both_sensors():
-    steps = get_abs_pos_efficient() #get_param()
-    enc_value = enc.value()
-    return [steps, enc_value]
+@micropython.native
+def get_both_sensors(stepper,encoder):
+    # bind the functions
+    steps_fun = stepper.get_abs_pos_efficient #get_param()
+    enc_fun = encoder.value
+    def fun():
+        steps = steps_fun()
+        enc_value = enc_fun()
+        return [steps, enc_value]
+    return fun
 
-            
-            
+
+@micropython.native
 async def control(controller):
-    while supervisory['control']:
+    while True:
         await controller.control()
         #async with supervisory['lock']:
         supervisory['counter'] += 1
@@ -99,35 +113,40 @@ async def control(controller):
         await asyncio.sleep_ms(controller.sampling_time_ms)
 
 
+pid = PID(get_both_sensors(stepper,encoder),stepper.set_period_direction,ctrlparam['sampling_time_ms'],ctrlparam['Kp1'],ctrlparam['Ki1'],ctrlparam['Kd1'],ctrlparam['Kp2'],ctrlparam['Ki2'],ctrlparam['Kd2'],0,0,0,0,0,0,2**16,2**16,False,True,True,supervisory)
 
-pid = PID(get_both_sensors,set_period_direction,ctrlparam['sampling_time_ms'],ctrlparam['Kp1'],ctrlparam['Ki1'],ctrlparam['Kd1'],ctrlparam['Kp2'],ctrlparam['Ki2'],ctrlparam['Kd2'],0,0,0,0,0,0,2**16,2**16,False,True,True,supervisory)
 
-        
+@micropython.native
+async def garbage_control(sleep_ms):
+    while True:
+        gc.collect()
+        gc.threshold((gc.mem_free() + gc.mem_alloc()) // 4)
+        await asyncio.sleep_ms(sleep_ms)
+    
+
 async def main():
+    garbage_task = asyncio.create_task(garbage_control(100))
     control_task = asyncio.create_task(control(pid))
-    # put repl_task at end, because it will cancel the other tasks on exit
     repl_task = asyncio.create_task(repl(globals()))
-    await asyncio.gather(control_task, repl_task)
-    
-    
-# D4 en D5
-Encoder_A_pin = 'D5' # pin 6 on CN5 = PB4 STM pin, pin 27 on CN10, 
-Encoder_B_pin = 'D4' # pin 5 on CN5 = PB5 STM pin, pin 29 on CN10
-enc_A = Pin(Encoder_A_pin,Pin.IN,Pin.PULL_UP)
-enc_B = Pin(Encoder_B_pin,Pin.IN,Pin.PULL_UP)
-enc = Encoder(enc_A,enc_B)
+
+    await repl_task
+    # if repl is stopped, also stop the other tasks:
+    control_task.cancel()
+    garbage_task.cancel()
+    #await asyncio.gather(control_task, repl_task)
+        
 
 set_control_sequence(1.,10.,-10.,100)
 set_reference_sequence(0.,20.,-20.,100)
 
 # initialize L6474:
-set_default()
+stepper.set_default()
 # enable L6474
-enable()
-set_period_direction(0)
+stepper.enable()
+stepper.set_period_direction(0)
 # run tasks
 asyncio.run(main())
 
 # clean up
-disable()
+stepper.disable()
     
