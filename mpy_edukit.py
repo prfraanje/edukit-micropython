@@ -2,7 +2,7 @@ import micropython
 from micropython import const
 from machine import Pin
 from pyb import Timer, freq
-from time import sleep_ms, sleep_us, ticks_us
+from time import sleep_ms, sleep_us, ticks_us, ticks_diff, ticks_ms
 from random import random
 import gc
 import array
@@ -16,6 +16,7 @@ from urepl import repl
 
 gc.threshold(50000) # total is about 61248
 
+LOG_BUF_LEN = const(256)
 
 stepper = L6474()
 
@@ -63,6 +64,23 @@ supervisory['control_repeat'] = True
 supervisory['control_counter'] = 0
 supervisory['control_num_samples'] = supervisory['record_num_samples']
 supervisory['control_sequence'] = array.array('f',[0. for _ in range(supervisory['control_num_samples'])])
+supervisory['log'] = False
+supervisory['log_ready'] = True
+supervisory['log_num_samples'] = 0
+supervisory['log_counter'] = 0
+supervisory['log0'] = False
+supervisory['log1'] = False
+supervisory['log0_data'] = [
+    array.array('i',[0  for _ in range(LOG_BUF_LEN)]),
+    array.array('i',[0  for _ in range(LOG_BUF_LEN)]),
+    array.array('f',[0. for _ in range(LOG_BUF_LEN)]),
+    ]
+supervisory['log1_data'] = [
+    array.array('i',[0  for _ in range(LOG_BUF_LEN)]),
+    array.array('i',[0  for _ in range(LOG_BUF_LEN)]),
+    array.array('f',[0. for _ in range(LOG_BUF_LEN)]),
+    ]
+supervisory['log_state'] = ''
 
 
 def set_control_sequence(std_noise=0.,height1=0.,height2=0.,duration=100):
@@ -95,6 +113,7 @@ def get_both_sensors(stepper,encoder):
 @micropython.native
 async def control(controller):
     while True:
+        t0_ms = ticks_ms()
         await controller.control()
         #async with supervisory['lock']:
         supervisory['counter'] += 1
@@ -105,12 +124,51 @@ async def control(controller):
                 supervisory['record_ready'] = True
             else:
                 supervisory['record_ready'] = False
-                supervisory['record_data'][0][supervisory['record_counter']] = controller.sample[0]
-                supervisory['record_data'][1][supervisory['record_counter']] = controller.sample[1]
-                supervisory['record_data'][2][supervisory['record_counter']] = controller.sample[2]
-                supervisory['record_counter'] += 1
+                counter = supervisory['record_counter']
+                supervisory['record_data'][0][counter] = controller.sample[0]
+                supervisory['record_data'][1][counter] = controller.sample[1]
+                supervisory['record_data'][2][counter] = controller.sample[2]
+                supervisory['record_counter'] = counter + 1
 
-        await asyncio.sleep_ms(controller.sampling_time_ms)
+        if supervisory['log']:
+            log_counter = supervisory['log_counter']            
+            if log_counter >= supervisory['log_num_samples']:
+                supervisory['log'] = False
+                supervisory['log0'] = False
+                supervisory['log1'] = False                
+                supervisory['log_counter'] = 0
+                supervisory['log_ready'] = True
+            else:
+                supervisory['log_ready'] = False
+
+                # following 2 if statements guarantee that log0 is active 0 ... LOG_BUF_LEN and log1 from LOG_BUF_LEN + 1 ... 2 * LOG_BUF_LEN
+                if log_counter % LOG_BUF_LEN == 0:
+                    if log_counter % (2*LOG_BUF_LEN) == 0:
+                        supervisory['log0'] = True
+                        supervisory['log1'] = False
+                    else:    
+                        supervisory['log0'] = False
+                        supervisory['log1'] = True
+
+                counter = log_counter % LOG_BUF_LEN 
+                if supervisory['log0']: # log buffer 0                    
+                    supervisory['log0_data'][0][counter] = controller.sample[0]
+                    supervisory['log0_data'][1][counter] = controller.sample[1]
+                    supervisory['log0_data'][2][counter] = controller.sample[2]                    
+                elif supervisory['log1']: # log buffer 1
+                    supervisory['log1_data'][0][counter] = controller.sample[0]
+                    supervisory['log1_data'][1][counter] = controller.sample[1]
+                    supervisory['log1_data'][2][counter] = controller.sample[2]                    
+                else:
+                    supervisory['log_state'] = 'error: cannot log0 and log1'
+                    
+                supervisory['log_counter'] += 1
+        remaining_time = controller.sampling_time_ms - ticks_diff(ticks_ms(),t0_ms)
+        if remaining_time>0:
+            controller.log = 0
+            await asyncio.sleep_ms(remaining_time)
+        else:
+            controller.log = remaining_time
 
 
 pid = PID(get_both_sensors(stepper,encoder),stepper.set_period_direction,ctrlparam['sampling_time_ms'],ctrlparam['Kp1'],ctrlparam['Ki1'],ctrlparam['Kd1'],ctrlparam['Kp2'],ctrlparam['Ki2'],ctrlparam['Kd2'],0,0,0,0,0,0,2**16,2**16,False,True,True,supervisory)
@@ -125,7 +183,7 @@ async def garbage_control(sleep_ms):
     
 
 async def main():
-    garbage_task = asyncio.create_task(garbage_control(100))
+    garbage_task = asyncio.create_task(garbage_control(1000))
     control_task = asyncio.create_task(control(pid))
     repl_task = asyncio.create_task(repl(globals()))
 

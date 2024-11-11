@@ -30,6 +30,7 @@ class PID():
         self.run2 = run2  # if True run the controller                
         self.sample = [0, 0, 0.]
         self.supervisory = supervisory
+        self.log = 0
  
     @micropython.native
     def limit(self):

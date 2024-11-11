@@ -31,7 +31,7 @@ async def repl(namespace=None):
             break
         
         try:
-            stream_out.write(str(eval(cmd,namespace)).encode('utf-8'))
+            stream_out.write(repr(eval(cmd,namespace)).encode('utf-8'))
             stream_out.write(END_PATTERN)
         except: # SyntaxError:
             try:

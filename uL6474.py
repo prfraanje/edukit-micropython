@@ -154,6 +154,7 @@ class L6474():
         elif param == 'T_FAST':
             addr_int = 0x0E
             num_bytes = 1
+            signed = False
         elif param == 'TON_MIN':
             addr_int = 0x0F
             num_bytes = 1
@@ -230,8 +231,6 @@ class L6474():
         else:
             return val
 
-    
-    #@micropython.native
     def set_param(self,param,value):
         param = param.upper()
         if param == 'ABS_POS':
@@ -253,6 +252,7 @@ class L6474():
         elif param == 'T_FAST':
             addr_int = 0x0E
             num_bytes = 1
+            signed = False
         elif param == 'TON_MIN':
             addr_int = 0x0F
             num_bytes = 1
@@ -298,16 +298,6 @@ class L6474():
         rxdata = self.spi_send_receive(txdata)
         return self.bytes2int(rxdata,signed=signed)
     
-    #@micropython.native
-    # def set_default():
-    #     ret = 0
-    #     for reg in L6474_registers:
-    #         value = L6474_registers[reg]['default']
-    #         if isinstance(value,int):
-    #             res = set_param(reg,value)
-    #             #print(f'register {reg} set to {value}, response is {res}')
-    #             ret += res
-    #     return ret
 
     def set_default(self):
         ret = 0
@@ -324,51 +314,8 @@ class L6474():
         ret += self.set_param('ALARM_EN',0xFF)
         ret += self.set_param('CONFIG',0x2E88)
         #ret += self.set_param('ALARM_EN','')    
-
         return ret
 
-
-    # L6474_registers = {
-    #     'ABS_POS'   : {'addr': 0x01, 'signed': True, 'num_bits': 22, 'num_bytes': 3, 'reset': 0x0, 'default': 0x0},
-    #     'EL_POS'    : {'addr': 0x02, 'signed': False,  'num_bits': 9, 'num_bytes': 2, 'reset': 0x0, 'default': 0x0},
-    #     'MARK'      : {'addr': 0x03, 'signed': True,  'num_bits': 22, 'num_bytes': 3, 'reset': 0x0, 'default': 0x0},
-    #     'TVAL'      : {'addr': 0x09, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x18}, #0x18 = 0.78125 A (0.8 A, 12 V is maximum according to UM2717 guide of STM)
-    #     'T_FAST'    : {'addr': 0x0E, 'signed': False, 'num_bits': 8, 'num_bytes': 1, 'reset': 0x19, 'default': 0x19},
-    #     'TON_MIN'   : {'addr': 0x0F, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x29},
-    #     'TOFF_MIN'  : {'addr': 0x10, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x29},
-    #     'ADC_OUT'   : {'addr': 0x12, 'signed': False, 'num_bits': 5, 'num_bytes': 1, 'reset': '', 'default': ''},
-    #     'OCD_TH'    : {'addr': 0x13, 'signed': False, 'num_bits': 4, 'num_bytes': 1, 'reset': 0x8, 'default': 0x2}, #0x2 = 1.125 A
-    #     'STEP_MODE' : {'addr': 0x16, 'signed': False, 'num_bits': 8, 'num_bytes': 1, 'reset': 0x7, 'default': 0xF}, #x0f = 0b00001111, 16 bit microstepping
-    #     'ALARM_EN'  : {'addr': 0x17, 'signed': False, 'num_bits': 8, 'num_bytes': 1, 'reset': 0xFF, 'default': 0xFF},
-    #     'CONFIG'    : {'addr': 0x18, 'signed': False, 'num_bits': 16, 'num_bytes': 2, 'reset': 0x2E88, 'default': 0x2E88},
-    #     'STATUS'    : {'addr': 0x19, 'signed': False, 'num_bits': 16, 'num_bytes': 2, 'reset': '', 'default': ''},
-    #     }
-
-
-    # #@micropython.native
-    # def pulse(number=1):
-    #     # speed is about 1 pulse in 38.039 us
-    #     flag = False
-    #     if number<0:
-    #         direction.value(not direction.value()) # toggle direction
-    #         flag = True;
-
-    #     for i in range(abs(number)):
-    #         pwm.value(1)
-
-    #     if flag:
-    #         direction.value(not direction.value()) # toggle direction back
-
-
-    #def set_speed(usteps_per_second):
-    #    number,rest = divmod(
-
-    # def measure_uticks(N=1000):
-    #     t0 = ticks_us()
-    #     for i in range(1):
-    #         pulse(N)
-    #     t1 = ticks_us()
-    #     return (t1-t0)/N
 
     
     @micropython.native
@@ -400,4 +347,59 @@ class L6474():
                 direction.value(0)
             else:
                 direction.value(1)
+
+#@micropython.native
+# def set_default():
+#     ret = 0
+#     for reg in L6474_registers:
+#         value = L6474_registers[reg]['default']
+#         if isinstance(value,int):
+#             res = set_param(reg,value)
+#             #print(f'register {reg} set to {value}, response is {res}')
+#             ret += res
+#     return ret
+
+
+                
+# L6474_registers = {
+#     'ABS_POS'   : {'addr': 0x01, 'signed': True, 'num_bits': 22, 'num_bytes': 3, 'reset': 0x0, 'default': 0x0},
+#     'EL_POS'    : {'addr': 0x02, 'signed': False,  'num_bits': 9, 'num_bytes': 2, 'reset': 0x0, 'default': 0x0},
+#     'MARK'      : {'addr': 0x03, 'signed': True,  'num_bits': 22, 'num_bytes': 3, 'reset': 0x0, 'default': 0x0},
+#     'TVAL'      : {'addr': 0x09, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x18}, #0x18 = 0.78125 A (0.8 A, 12 V is maximum according to UM2717 guide of STM)
+#     'T_FAST'    : {'addr': 0x0E, 'signed': False, 'num_bits': 8, 'num_bytes': 1, 'reset': 0x19, 'default': 0x19},
+#     'TON_MIN'   : {'addr': 0x0F, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x29},
+#     'TOFF_MIN'  : {'addr': 0x10, 'signed': False, 'num_bits': 7, 'num_bytes': 1, 'reset': 0x29, 'default': 0x29},
+#     'ADC_OUT'   : {'addr': 0x12, 'signed': False, 'num_bits': 5, 'num_bytes': 1, 'reset': '', 'default': ''},
+#     'OCD_TH'    : {'addr': 0x13, 'signed': False, 'num_bits': 4, 'num_bytes': 1, 'reset': 0x8, 'default': 0x2}, #0x2 = 1.125 A
+#     'STEP_MODE' : {'addr': 0x16, 'signed': False, 'num_bits': 8, 'num_bytes': 1, 'reset': 0x7, 'default': 0xF}, #x0f = 0b00001111, 16 bit microstepping
+#     'ALARM_EN'  : {'addr': 0x17, 'signed': False, 'num_bits': 8, 'num_bytes': 1, 'reset': 0xFF, 'default': 0xFF},
+#     'CONFIG'    : {'addr': 0x18, 'signed': False, 'num_bits': 16, 'num_bytes': 2, 'reset': 0x2E88, 'default': 0x2E88},
+#     'STATUS'    : {'addr': 0x19, 'signed': False, 'num_bits': 16, 'num_bytes': 2, 'reset': '', 'default': ''},
+#     }
+
+
+# #@micropython.native
+# def pulse(number=1):
+#     # speed is about 1 pulse in 38.039 us
+#     flag = False
+#     if number<0:
+#         direction.value(not direction.value()) # toggle direction
+#         flag = True;
+
+#     for i in range(abs(number)):
+#         pwm.value(1)
+
+#     if flag:
+#         direction.value(not direction.value()) # toggle direction back
+
+
+#def set_speed(usteps_per_second):
+#    number,rest = divmod(
+
+# def measure_uticks(N=1000):
+#     t0 = ticks_us()
+#     for i in range(1):
+#         pulse(N)
+#     t1 = ticks_us()
+#     return (t1-t0)/N
 

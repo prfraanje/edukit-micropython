@@ -14,6 +14,10 @@ import time
 
 import aioserial
 
+import numpy as np
+import matplotlib.pyplot as plt
+#plt.ion() # enable automatic drawing mode
+
 from textual.app import App, ComposeResult
 from textual import on
 from textual.screen import Screen
@@ -28,8 +32,13 @@ from textual_plotext import PlotextPlot
 
 END_PATTERN = b'\x04'
 #END_PATTERN = b'<->\r\n '
+SAMPLING_TIME = 0.01
+LOG_BUF_LEN = 256
+log_data = np.zeros((3*LOG_BUF_LEN,3))
 
 completions = ["micropython_results", "python_results", "micropython_tasks", "python_tasks",]
+
+
 
 
 class TimeDisplay(Static):
@@ -77,7 +86,6 @@ class TimeDisplay(Static):
         self.update(f"{hours:02,.0f}:{minutes:02.0f}:{seconds:05.2f}")
 
 
-
 class IDE(App):
     TITLE = "Edukit Pendulum Control"
     SUB_TITLE = "with micropython and textual"
@@ -88,13 +96,16 @@ class IDE(App):
         Binding("ctrl+z", "suspend_process")
     ]
 
+    logtext = reactive("Not logging",init=False)
+
     def compose(self) -> ComposeResult:
         """Create child widgets for the app."""
         yield Header()
         yield Footer()
         with Horizontal():
             with Vertical(id='left_bar'): # left bar, python buttons
-                yield Button('')
+                yield Label(self.logtext,id='loglabel')
+                yield Button('Log Data',id='log_data_button')
             with Vertical(id='middle_bar'): # middle bar, plots and repl's
                 #yield Label("Press Ctrl+Z tot suspend.")
                 yield TimeDisplay(id='timer_plots')
@@ -115,6 +126,7 @@ class IDE(App):
                 
 
     def on_mount(self):
+        global log_data
         self.query_one("#python_output").can_focus=False
         self.query_one("#micropython_output").can_focus=False
 
@@ -126,6 +138,11 @@ class IDE(App):
         #plt2 = self.query_one('#plot2').plt
         #plt2.title("Plot2") # to apply a title
 
+    @on(Button.Pressed,'#log_data_button')
+    async def handle_log_data(self, event: Button.Pressed) -> None:
+        log_task = asyncio.create_task(self.data_logger())
+        
+        
     @on(RadioButton.Changed)
     async def handle_radiobuttons(self, event: RadioButton.Changed) -> None:
         global micropython_serial_interface
@@ -218,17 +235,69 @@ class IDE(App):
             self.query_one("#micropython_output").write(result)
 
 
+    def watch_logtext(self, text: str) -> None:
+        self.query_one('#loglabel').update(text)
+    
+
     def action_toggle_dark(self) -> None:
         """An action to toggle dark mode."""
         self.dark = not self.dark
 
     def action_toggle_update_plots(self) -> None:
         """Action to pause and resume the TimeDisplay and thus the plot update."""
+        if self.logtext == 'Not logging':
+            timer = self.query_one('#timer_plots').update_timer
+            if timer._active.is_set():
+                timer.pause()
+            else:
+                timer.resume()
+
+    async def data_logger(self):
+        global log_data
+        log = True
+        self.logtext = 'Logging'
+        log0_prev = False
+        log1_prev = False
+        log0 = True
+        log1 = True
+        log_ready = False
+        log_num_buf = 10
+        log_num_samples = log_num_buf * LOG_BUF_LEN
+        log_buf_counter = 0
+        log_data = np.zeros((log_num_samples,3))
+
+        # stop updating plots not to overload serial interface
         timer = self.query_one('#timer_plots').update_timer
-        if timer._active.is_set():
-            timer.pause()
-        else:
-            timer.resume()
+        timer.pause()
+
+        await serial_eval(micropython_serial_interface,f"supervisory['log_num_samples']={log_num_samples}")
+        await serial_eval(micropython_serial_interface,f"supervisory['log_ready']={log_ready}")
+        await serial_eval(micropython_serial_interface,f"supervisory['log']={log}")
+        log = await serial_eval(micropython_serial_interface,"supervisory['log']")            
+        log0 = await serial_eval(micropython_serial_interface,"supervisory['log0']")
+        log1 = await serial_eval(micropython_serial_interface,"supervisory['log1']")
+        while log:
+            log0_prev = log0
+            log1_prev = log1
+            log = await serial_eval(micropython_serial_interface,"supervisory['log']")            
+            log0 = await serial_eval(micropython_serial_interface,"supervisory['log0']")
+            log1 = await serial_eval(micropython_serial_interface,"supervisory['log1']")
+            # detect True -> False changes:
+            if (log0_prev == True) and (log0 == False): # log0 is finished
+                log0_data = await serial_eval(micropython_serial_interface,f"supervisory['log0_data']")
+                log_data[log_buf_counter*LOG_BUF_LEN:(log_buf_counter+1)*LOG_BUF_LEN,:] = np.array(log0_data).T
+                log_buf_counter += 1                
+            elif  (log1_prev == True) and (log1 == False): # log1 is finished
+                log1_data = await serial_eval(micropython_serial_interface,f"supervisory['log1_data']")
+                log_data[log_buf_counter*LOG_BUF_LEN:(log_buf_counter+1)*LOG_BUF_LEN,:] = np.array(log1_data).T
+                log_buf_counter += 1
+            else:
+                await asyncio.sleep(round(0.1*LOG_BUF_LEN*SAMPLING_TIME))
+
+        self.logtext = 'Not logging'
+        # resume updating of plots
+        timer.resume()
+
             
 async def serial_eval(serial_interface,command,END_PATTERN=b'\x04'):
     response = None
