@@ -61,7 +61,13 @@ class PID():
         self.Kp2 = Kp2
         self.Ki2 = Ki2
         self.Kd2 = Kd2
-        
+
+    def get_gains1(self):
+        return (self.Kp1,self.Ki1,self.Kd1)
+
+    def get_gains2(self):
+        return (self.Kp2,self.Ki2,self.Kd2)
+    
     def reset_state(self):
         self.e1_sum = 0
         self.y1_prev = 0

@@ -3,9 +3,11 @@
 from array import array
 import asyncio
 from collections import deque
+import datetime
 import logging
 logging.getLogger("asyncio").setLevel(logging.WARNING)
 import math
+import pickle
 import re
 import serial.tools.list_ports as list_ports
 import sys
@@ -31,14 +33,13 @@ from textual_plotext import PlotextPlot
 
 
 END_PATTERN = b'\x04'
-#END_PATTERN = b'<->\r\n '
 SAMPLING_TIME = 0.01
 LOG_BUF_LEN = 256
 log_data = np.zeros((3*LOG_BUF_LEN,3))
 
-completions = ["micropython_results", "python_results", "micropython_tasks", "python_tasks",]
-
-
+completions = ["micropython_results", "python_results", "micropython_tasks", "python_tasks",
+               "pid.","pid.set_gains1()","pid.pid_set_gains2()",
+               ]
 
 
 class TimeDisplay(Static):
@@ -104,6 +105,14 @@ class IDE(App):
         yield Footer()
         with Horizontal():
             with Vertical(id='left_bar'): # left bar, python buttons
+                # tekst input for number of buffers
+                # label output for number of samples
+                # checkbox for datetime appending of output
+                yield Static("Number of BUF_LEN's: ")
+                yield Input(type="integer",id='num_bufs_input')
+                with Horizontal():
+                    yield Static("Append datetime: ")
+                    yield Switch(value=True,animate=False,id='datetimeswitch')
                 yield Label(self.logtext,id='loglabel')
                 yield Button('Log Data',id='log_data_button')
             with Vertical(id='middle_bar'): # middle bar, plots and repl's
@@ -120,9 +129,11 @@ class IDE(App):
                         yield RichLog(highlight=True,markup=True,auto_scroll=True,max_lines=1000,id="micropython_output")
                         yield Input(placeholder="MicroPython prompt",id="micropython_input",suggester=SuggestFromList(completions))
             with Vertical(id='right_bar'): # right bar, micropython buttons
+                # RadioSet choice for pid vs state-space
+                # input fields for pid gains (optional)
                 yield RadioButton('pid.run',value=False,id='pid_run')
                 yield RadioButton('pid.run1',value=True,id='pid_run1')
-                yield RadioButton('pid.run2',value=True,id='pid_run2')                                
+                yield RadioButton('pid.run2',value=True,id='pid_run2')                      
                 
 
     def on_mount(self):
@@ -297,6 +308,12 @@ class IDE(App):
         self.logtext = 'Not logging'
         # resume updating of plots
         timer.resume()
+        fname="log_data"
+        if self.query_one('#datetimeswitch').value == True:
+            fname += "_" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        fname += '.pickle'
+        with open(fname,'wb') as handle:
+            pickle.dump(log_data,handle,protocol=picke.HIGHEST_PROTOCOL)
 
             
 async def serial_eval(serial_interface,command,END_PATTERN=b'\x04'):
