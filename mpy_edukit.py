@@ -10,7 +10,7 @@ import array
 import asyncio
 
 from uencoder import Encoder
-from ucontrol import PID
+from ucontrol import PID, StateSpace
 from uL6474 import L6474
 from urepl import repl
 
@@ -39,6 +39,10 @@ ctrlparam['Kd1'] = 0.
 ctrlparam['Kp2'] = 0.
 ctrlparam['Ki2'] = 0.
 ctrlparam['Kd2'] = 0.
+ctrlparam['A'] = [[0.,0.],[0.,0.]]
+ctrlparam['B'] = [0.,0.]
+ctrlparam['C'] = [0.,0.]
+ctrlparam['type'] = 'pid' # can also be state_space
 
 supervisory = {}
 s = supervisory # make alias for easier reference in repl
@@ -111,58 +115,68 @@ def get_both_sensors(stepper,encoder):
 
 
 @micropython.native
-async def control(controller):
+async def control(controller1,controller2):
+    ctrlp = ctrlparam
+    supervis = supervisory
     while True:
         t0_ms = ticks_ms()
+        
+        if ctrlp['type'] == 'pid':
+            controller = controller1
+        elif ctrlp['type'] == 'state_space':
+            controller = controller2
+        else:
+            controller = controller1 # default to pid
+            
         await controller.control()
-        #async with supervisory['lock']:
-        supervisory['counter'] += 1
-        if supervisory['record']:
-            if supervisory['record_counter'] >= supervisory['record_num_samples']:
-                supervisory['record'] = False
-                supervisory['record_counter'] = 0
-                supervisory['record_ready'] = True
+        #async with supervis['lock']:
+        supervis['counter'] += 1
+        if supervis['record']:
+            if supervis['record_counter'] >= supervis['record_num_samples']:
+                supervis['record'] = False
+                supervis['record_counter'] = 0
+                supervis['record_ready'] = True
             else:
-                supervisory['record_ready'] = False
-                counter = supervisory['record_counter']
-                supervisory['record_data'][0][counter] = controller.sample[0]
-                supervisory['record_data'][1][counter] = controller.sample[1]
-                supervisory['record_data'][2][counter] = controller.sample[2]
-                supervisory['record_counter'] = counter + 1
+                supervis['record_ready'] = False
+                counter = supervis['record_counter']
+                supervis['record_data'][0][counter] = controller.sample[0]
+                supervis['record_data'][1][counter] = controller.sample[1]
+                supervis['record_data'][2][counter] = controller.sample[2]
+                supervis['record_counter'] = counter + 1
 
-        if supervisory['log']:
-            log_counter = supervisory['log_counter']            
-            if log_counter >= supervisory['log_num_samples']:
-                supervisory['log'] = False
-                supervisory['log0'] = False
-                supervisory['log1'] = False                
-                supervisory['log_counter'] = 0
-                supervisory['log_ready'] = True
+        if supervis['log']:
+            log_counter = supervis['log_counter']            
+            if log_counter >= supervis['log_num_samples']:
+                supervis['log'] = False
+                supervis['log0'] = False
+                supervis['log1'] = False                
+                supervis['log_counter'] = 0
+                supervis['log_ready'] = True
             else:
-                supervisory['log_ready'] = False
+                supervis['log_ready'] = False
 
                 # following 2 if statements guarantee that log0 is active 0 ... LOG_BUF_LEN and log1 from LOG_BUF_LEN + 1 ... 2 * LOG_BUF_LEN
                 if log_counter % LOG_BUF_LEN == 0:
                     if log_counter % (2*LOG_BUF_LEN) == 0:
-                        supervisory['log0'] = True
-                        supervisory['log1'] = False
+                        supervis['log0'] = True
+                        supervis['log1'] = False
                     else:    
-                        supervisory['log0'] = False
-                        supervisory['log1'] = True
+                        supervis['log0'] = False
+                        supervis['log1'] = True
 
                 counter = log_counter % LOG_BUF_LEN 
-                if supervisory['log0']: # log buffer 0                    
-                    supervisory['log0_data'][0][counter] = controller.sample[0]
-                    supervisory['log0_data'][1][counter] = controller.sample[1]
-                    supervisory['log0_data'][2][counter] = controller.sample[2]                    
-                elif supervisory['log1']: # log buffer 1
-                    supervisory['log1_data'][0][counter] = controller.sample[0]
-                    supervisory['log1_data'][1][counter] = controller.sample[1]
-                    supervisory['log1_data'][2][counter] = controller.sample[2]                    
+                if supervis['log0']: # log buffer 0                    
+                    supervis['log0_data'][0][counter] = controller.sample[0]
+                    supervis['log0_data'][1][counter] = controller.sample[1]
+                    supervis['log0_data'][2][counter] = controller.sample[2]                    
+                elif supervis['log1']: # log buffer 1
+                    supervis['log1_data'][0][counter] = controller.sample[0]
+                    supervis['log1_data'][1][counter] = controller.sample[1]
+                    supervis['log1_data'][2][counter] = controller.sample[2]                    
                 else:
-                    supervisory['log_state'] = 'error: cannot log0 and log1'
+                    supervis['log_state'] = 'error: cannot log0 and log1'
                     
-                supervisory['log_counter'] += 1
+                supervis['log_counter'] += 1
         remaining_time = controller.sampling_time_ms - ticks_diff(ticks_ms(),t0_ms)
         if remaining_time>0:
             controller.log = 0
@@ -172,6 +186,8 @@ async def control(controller):
 
 
 pid = PID(get_both_sensors(stepper,encoder),stepper.set_period_direction,ctrlparam['sampling_time_ms'],ctrlparam['Kp1'],ctrlparam['Ki1'],ctrlparam['Kd1'],ctrlparam['Kp2'],ctrlparam['Ki2'],ctrlparam['Kd2'],0,0,0,0,0,0,2**16,2**16,False,True,True,supervisory)
+
+state_space = StateSpace(encoder.value,stepper.set_period_direction,ctrlparam['sampling_time_ms'],ctrlparam['A'],ctrlparam['B'],ctrlparam['C'],False,supervisory)
 
 
 @micropython.native
@@ -184,7 +200,7 @@ async def garbage_control(sleep_ms):
 
 async def main():
     garbage_task = asyncio.create_task(garbage_control(1000))
-    control_task = asyncio.create_task(control(pid))
+    control_task = asyncio.create_task(control(pid,state_space))
     repl_task = asyncio.create_task(repl(globals()))
 
     await repl_task

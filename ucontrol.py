@@ -1,3 +1,6 @@
+from array import array
+import micropython
+
 class PID():
     def __init__(self,get_sensor,set_actuator,sampling_time_ms,Kp1,Ki1,Kd1,Kp2,Ki2,Kd2,r1,r2,e1_sum,e2_sum,y1_prev,y2_prev,limit1_sum,limit2_sum,run=False,run1=True,run2=True,supervisory={}):
         self.get_sensor = get_sensor
@@ -140,3 +143,38 @@ class PID():
 
         
 
+
+class StateSpace():
+    def __init__(self,get_sensor,set_actuator,sampling_time_ms,A,B,C,run=False,supervisory={}):
+        self.get_sensor = get_sensor
+        self.set_actuator = set_actuator
+        self.sampling_time_ms = sampling_time_ms
+        self.A = A
+        self.B = B
+        self.C = C
+        self.run = run
+        self.x = array('f',[0., 0.]) # only second order for now!
+        self.u = 0.
+        self.sample = [0, 0, 0.]
+        self.gain = 0.
+        self.supervisory = supervisory
+
+    @micropython.native
+    async def control(self):
+        self.y = self.get_sensor()
+        
+        if self.run:
+            A = self.A
+            B = self.B
+            C = self.C
+            x = self.x
+            y = self.y
+            x[0] = A[0][0]*x[0]+A[0][1]*x[1]+B[0]*y
+            x[1] = A[1][0]*x[0]+A[1][1]*x[1]+B[1]*y
+            self.u = C[0] * x[0] + C[1]*x[1]
+            self.set_actuator(self.gain * self.u)
+            
+        self.sample[1] = self.y
+        self.sample[2] = self.u
+        
+            

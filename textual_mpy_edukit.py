@@ -26,7 +26,7 @@ from textual.screen import Screen
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical
 from textual.reactive import reactive
-from textual.widgets import Header, Footer, Static, Button, Label, Input, RichLog, RadioButton
+from textual.widgets import Header, Footer, Static, Button, Label, Input, RichLog, RadioButton, RadioSet, Switch, Rule
 from textual.suggester import SuggestFromList
 
 from textual_plotext import PlotextPlot
@@ -72,11 +72,11 @@ class TimeDisplay(Static):
             
         for i in range(len(data)): self.plot_history[i].append(data[i])
         self.plot_output[0].plt.clear_data()
-        self.plot_output[0].plt.scatter(self.plot_history[0],yside='left',label='stepper steps',marker='fhd')
-        self.plot_output[0].plt.scatter(self.plot_history[1],yside='right',label='encoder ticks',marker='fhd')
+        self.plot_output[0].plt.scatter(self.plot_history[0],yside='left',label='stepper steps') #,marker='fhd')
+        self.plot_output[0].plt.scatter(self.plot_history[1],yside='right',label='encoder ticks') #,marker='fhd')
         self.plot_output[0].refresh()
         self.plot_input[0].plt.clear_data()
-        self.plot_input[0].plt.scatter(self.plot_history[2],yside='left',label='control',marker='fhd')
+        self.plot_input[0].plt.scatter(self.plot_history[2],yside='left',label='control') #,marker='fhd')
         self.plot_input[0].refresh()
         
 
@@ -108,9 +108,10 @@ class IDE(App):
                 # tekst input for number of buffers
                 # label output for number of samples
                 # checkbox for datetime appending of output
-                yield Static("Number of BUF_LEN's: ")
-                yield Input(type="integer",id='num_bufs_input')
-                with Horizontal():
+                yield Static(f"Number of buffers: ")
+                yield Static(f"(One buffer is {LOG_BUF_LEN} samples.)")                
+                yield Input(type="integer",value='1',id='num_bufs_input')
+                with Vertical():
                     yield Static("Append datetime: ")
                     yield Switch(value=True,animate=False,id='datetimeswitch')
                 yield Label(self.logtext,id='loglabel')
@@ -131,10 +132,17 @@ class IDE(App):
             with Vertical(id='right_bar'): # right bar, micropython buttons
                 # RadioSet choice for pid vs state-space
                 # input fields for pid gains (optional)
+                yield Label("Select controller type:")
+                with RadioSet(id='control_type'):
+                    yield RadioButton("PID",value=True)
+                    yield RadioButton("State-space")
+                yield Rule(line_style="ascii")
+                yield Label("PID:")
                 yield RadioButton('pid.run',value=False,id='pid_run')
                 yield RadioButton('pid.run1',value=True,id='pid_run1')
-                yield RadioButton('pid.run2',value=True,id='pid_run2')                      
-                
+                yield RadioButton('pid.run2',value=True,id='pid_run2')
+                yield Rule(line_style="ascii")
+                yield RadioButton('ss.run',value=False,id='ss_run')
 
     def on_mount(self):
         global log_data
@@ -153,6 +161,15 @@ class IDE(App):
     async def handle_log_data(self, event: Button.Pressed) -> None:
         log_task = asyncio.create_task(self.data_logger())
         
+    @on(RadioSet.Changed,'#control_type')
+    async def handle_radioset_control_type(self, event: RadioSet.Changed) -> None:
+        if str(event.pressed.label) == "PID":
+            ctrl_type = 'pid'
+        elif str(event.pressed.label) == "State-space":
+            ctrl_type = 'state_space'
+        else:
+            ctrl_type = 'pid'
+        await serial_eval(micropython_serial_interface, f'ctrlparam["type"]=\"{ctrl_type}\"')
         
     @on(RadioButton.Changed)
     async def handle_radiobuttons(self, event: RadioButton.Changed) -> None:
@@ -164,6 +181,8 @@ class IDE(App):
             button = 'pid.run1'
         elif button_id == 'pid_run2':
             button = 'pid.run2'
+        elif button_id == 'ss_run':
+            button = 'state_space.run'
         else:
             return None
             
@@ -272,7 +291,7 @@ class IDE(App):
         log0 = True
         log1 = True
         log_ready = False
-        log_num_buf = 10
+        log_num_buf = int(self.query_one('#num_bufs_input').value)
         log_num_samples = log_num_buf * LOG_BUF_LEN
         log_buf_counter = 0
         log_data = np.zeros((log_num_samples,3))
@@ -313,7 +332,7 @@ class IDE(App):
             fname += "_" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
         fname += '.pickle'
         with open(fname,'wb') as handle:
-            pickle.dump(log_data,handle,protocol=picke.HIGHEST_PROTOCOL)
+            pickle.dump(log_data,handle,protocol=pickle.HIGHEST_PROTOCOL)
 
             
 async def serial_eval(serial_interface,command,END_PATTERN=b'\x04'):
@@ -373,7 +392,6 @@ if __name__ == '__main__':
     ser.write(startup_cmd)                   # run edukit program on micropython board
     ser.flush()
     time.sleep(0.5) # wait for edukit to start up
-    #serial_eval(ser,'enc.value(0)')
     
     ser.reset_output_buffer()
     ser.reset_input_buffer()

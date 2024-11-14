@@ -6,11 +6,11 @@ Screen {
 
 
 #left_bar {
-    width: 1fr;
+    width: 2fr;
 }
 
 #middle_bar {
-    width: 8fr;
+    width: 7fr;
 }
 
 #right_bar {
@@ -24,4 +24,9 @@ Screen {
 
 #plot_input {
     height: 0.5fr;
+}
+
+Switch {
+    height: auto;
+    width: auto;
 }
