@@ -54,74 +54,65 @@
    ```
 
 ## Usage
-- If everything is fine, you should see the screen similar as the picture above, and repeated here:
+1. If everything is fine, you should see the screen similar as the picture above, and repeated here:
 ![User interface](./img/textual_mpy_edukit.png)
 You may need to increase your terminal size. Since  [Textual](https://textual.textualize.io/) makes use of Unicode (UTF-8) characters on Windows 10 and older versions not all characters are displayed correctly. One may try to evaluate the command `chcp 650100` before running `python textual_mpy_edukit.py`, or just live with the imperfection.
-- In the center you see two plot windows. The upper one shows the sensors: 
 
-  * the steps of the stepper motor in blue, that is retrieved in micropython by evaluating `stepper.get_abs_pos_efficient()`
-  * the ticks of the encoder in green, that is retrieved in micropython  by `encoder.value()`).
+2. In the center you see two plot windows. The upper one shows the sensors: 
+   * the steps of the stepper motor in blue, that is retrieved in micropython by evaluating `stepper.get_abs_pos_efficient()`
+   * the ticks of the encoder in green, that is retrieved in micropython  by `encoder.value()`).
   
-The lower plot shows the control value, which is proportional to the frequency of the pulses send to the stepper motor by the L6474 stepper driver. In micropython this is the variable `pid.u` for the PID controller or `state_space.u` for the state-space controller, and is send to the L6474 stepper motor driver by evaluating e.g. `stepper.set_period_direction(pid.u)` (for PID).
+   The lower plot shows the control value, which is proportional to the frequency of the pulses send to the stepper motor by the L6474 stepper driver. In micropython this is the variable `pid.u` for the PID controller or `state_space.u` for the state-space controller, and is send to the L6474 stepper motor driver by evaluating e.g. `stepper.set_period_direction(pid.u)` (for PID).
 
-The samples are all stored in `pid.sample` or `state_space.sample`, and retrieved at a frequency of 20 Hz in the function `update_plots` in the class `TimeDisplay` in `textual_mpy_edukit.py` (also c.f. the attribute `self.update_timer = self.set_interval(1 / 20, self.update_time`), with the state-ment
-``` 
-resp = await serial_eval(micropython_serial_interface,'pid.sample')
-```
-In fact all (serial) communication between the PC and the microcontroller is handled by this function `serial_eval` in `textual_mpy_edukit.py`.
-- Below the plots there is a left and a right field: the left field contains a python prompt (bottom) and above a region that shows the output of the python interpreter. The right field is similar, but commands at the prompt are send to the microcontroller and the response is printed again above. So at the micropython prompt, e.g. one can type
+   The samples are all stored in `pid.sample` or `state_space.sample`, and retrieved at a frequency of 20 Hz in the function `update_plots` in the class `TimeDisplay` in `textual_mpy_edukit.py` (also c.f. the attribute `self.update_timer = self.set_interval(1 / 20, self.update_time`), with the state-ment
+   ``` 
+   resp = await serial_eval(micropython_serial_interface,'pid.sample')
+   ```
+   In fact all (serial) communication between the PC and the microcontroller is handled by this function `serial_eval` in `textual_mpy_edukit.py`.
 
-``` 
-pid.sample
-```
-to see the current value of respectively the stepper steps, encoder ticks and the control value. Also the PID controller gains can be returned, for the feedback from the stepper steps:
-
-``` 
-pid.Kp1
-pid.Ki1
-pid.Kd1
-```
-and for PID controller feeding back the encoder ticks
-
-``` 
-pid.Kp2
-pid.Ki2
-pid.Kd2
-```
-- At the micropython prompt one can also set these parameters, e.g. by
-
-```
-pid.Kp1 = 1
-```
-- For quicker getting and setting the PID controller gains, one can use these the following get- and set-functions as well:
-
-``` 
-pid.get_gains1()
-pid.get_gains2()
-pid.set_gains1(0.1,0.0001,0.001
-pid.set_gains2(0.1,0.0001,0.001
-```
-- The reference (setpoint) value for the feedback from the stepper motor is stored in
-
-``` 
-pid.r1
-```
-and for the feedback from the encoder ticks, the reference is
-
-``` 
-pid.r2
-
-```
-So if one wants to move the stepper-motor to an angle corresponding with step value 100, one sets (besides the gains of the controller and the run-flags, see shortly below):
-
-```
-pid.r1 = 100
-```
-- Note that the prompts only allow single line input.
-- The results returned by python as well as micropython are stored in python (left field) in the variables `python_results` and `micropython_results`, so they can be accessed later when needed.
-- The vertical bar on the right contains a number of settings (radiobuttons) that are directly connected to variables on the microcontroller, e.g. to switch between PID and state-space control, to turn on/off the PID controller (`pid.run`), and to turn off/on the PID controller for the stepper motor (`pid.run1`) and the encoder (`pid.run2`).
-- The vertical bar on the left is for logging. Logging is done with two buffers on the microcontroller, that are subsequently filled 
-
+3. Below the plots there is a left and a right field: the left field contains a python prompt (bottom) and above a region that shows the output of the python interpreter. The right field is similar, but commands at the prompt are send to the microcontroller and the response is printed again above. So at the micropython prompt, e.g. one can type
+   ``` 
+   pid.sample
+   ```
+   to see the current value of respectively the stepper steps, encoder ticks and the control value. Also the PID controller gains can be returned, for the feedback from the stepper steps:
+   ``` 
+   pid.Kp1
+   pid.Ki1
+   pid.Kd1
+   ```
+   and for PID controller feeding back the encoder ticks
+   ``` 
+   pid.Kp2
+   pid.Ki2
+   pid.Kd2
+   ```
+4. At the micropython prompt one can also set these parameters, e.g. by
+   ```
+   pid.Kp1 = 1
+   ```
+5. For quicker getting and setting the PID controller gains, one can use these the following get- and set-functions as well:
+   ``` 
+   pid.get_gains1()
+   pid.get_gains2()
+   pid.set_gains1(0.1,0.0001,0.001
+   pid.set_gains2(0.1,0.0001,0.001
+   ```
+6. The reference (setpoint) value for the feedback from the stepper motor is stored in
+   ```
+   pid.r1
+   ```
+   and for the feedback from the encoder ticks, the reference is
+   ``` 
+   pid.r2
+   ```
+   So if one wants to move the stepper-motor to an angle corresponding with step value 100, one sets (besides the gains of the controller and the run-flags, see shortly below):
+   ```
+   pid.r1 = 100
+   ```
+7. Note that the prompts only allow single line input.
+8. The results returned by python as well as micropython are stored in python (left field) in the variables `python_results` and `micropython_results`, so they can be accessed later when needed.
+9. The vertical bar on the right contains a number of settings (radiobuttons) that are directly connected to variables on the microcontroller, e.g. to switch between PID and state-space control, to turn on/off the PID controller (`pid.run`), and to turn off/on the PID controller for the stepper motor (`pid.run1`) and the encoder (`pid.run2`).
+10. The vertical bar on the left is for logging. Logging is done with two buffers on the microcontroller, that are subsequently filled 
 
 
 ## Control
