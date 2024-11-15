@@ -1,5 +1,5 @@
 # Textual Micropython Edukit Pendulum for Dynamic Control
-![User interface](textual_mpy_pendulum.png)
+![User interface](./img/textual_mpy_pendulum.png)
 [Micropython](https://micropython.org), [Python](https://www.python.org) and [Textual](https://textual.textualize.io/) User Interface (TUI) based control framework for the [Edukit Rotary Inverted Pendulum Control System](https://sites.google.com/view/ucla-st-motor-control/home) developed by ST Microsystems and UCLA. The micropython code is written for the STMicrosystem [Nucleo-F401RE](https://www.st.com/en/evaluation-tools/nucleo-f401re.html) the STMicrosystem [X-Nucleo IHM01A1](https://www.st.com/en/ecosystems/x-nucleo-ihm01a1.html) stepper motor board based on the [L6474](https://www.st.com/en/motor-drivers/l6474.html) stepper motor driver, that comes with the [STEVAL-EDUKIT](https://www.st.com/en/evaluation-tools/steval-edukit01.html), but can be adapted for other hardware as well.
 
 ## Dependencies
