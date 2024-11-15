@@ -53,6 +53,12 @@ erase:
 	$(RSHELL) rm /flash/uL6474.mpy
 	$(RSHELL) rm /flash/urepl.mpy
 
+erase_default:
+#	$(MPREMOTE) fs rm :boot.mpy
+#	$(MPREMOTE) fs rm :main.mpy
+
+	$(RSHELL) rm /flash/boot.mpy
+	$(RSHELL) rm /flash/main.mpy
 
 clean:
 	rm *.mpy
