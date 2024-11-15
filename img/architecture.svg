@@ -1,21 +1,37 @@
-<svg xmlns='http://www.w3.org/2000/svg' viewBox="0 0 423.821 195.84">
-<polygon points="146.16,37.44 134.64,41.76 134.64,33.12" style="fill:rgb(0,0,0)"/>
-<path d="M2.16,37.44L140.4,37.44"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="74.16" y="25.74" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Markdown</text>
-<text x="74.16" y="49.14" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Source</text>
-<path d="M161.16,72.72L258.341,72.72A15 15 0 0 0 273.341 57.72L273.341,17.16A15 15 0 0 0 258.341 2.16L161.16,2.16A15 15 0 0 0 146.16 17.16L146.16,57.72A15 15 0 0 0 161.16 72.72Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="209.75" y="17.28" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Markdown</text>
-<text x="209.75" y="37.44" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Formatter</text>
-<text x="209.75" y="57.6" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">(markdown.c)</text>
-<polygon points="417.341,37.44 405.821,41.76 405.821,33.12" style="fill:rgb(0,0,0)"/>
-<path d="M273.341,37.44L411.581,37.44"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="345.341" y="25.74" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">HTML+SVG</text>
-<text x="345.341" y="49.14" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Output</text>
-<polygon points="209.75,72.72 214.07,84.24 205.43,84.24" style="fill:rgb(0,0,0)"/>
-<polygon points="209.75,123.12 205.43,111.6 214.07,111.6" style="fill:rgb(0,0,0)"/>
-<path d="M209.75,78.48L209.75,117.36"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M176.136,193.68L243.365,193.68A15 15 0 0 0 258.365 178.68L258.365,138.12A15 15 0 0 0 243.365 123.12L176.136,123.12A15 15 0 0 0 161.136 138.12L161.136,178.68A15 15 0 0 0 176.136 193.68Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="209.75" y="138.24" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Pikchr</text>
-<text x="209.75" y="158.4" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Formatter</text>
-<text x="209.75" y="178.56" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">(pikchr.c)</text>
+<svg xmlns='http://www.w3.org/2000/svg' viewBox="0 0 573.581 442.08">
+<path d="M92.04,72.72L274.93,72.72A15 15 0 0 0 289.93 57.72L289.93,17.16A15 15 0 0 0 274.93 2.16L92.04,2.16A15 15 0 0 0 77.04 17.16L77.04,57.72A15 15 0 0 0 92.04 72.72Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="183.485" y="17.28" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">User interface</text>
+<text x="183.485" y="37.44" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Python on PC</text>
+<text x="183.485" y="57.6" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">(textual_mpy_edukit.py)</text>
+<polygon points="183.485,72.72 187.805,84.24 179.165,84.24" style="fill:rgb(0,0,0)"/>
+<polygon points="183.485,144.72 179.165,133.2 187.805,133.2" style="fill:rgb(0,0,0)"/>
+<path d="M183.485,78.48L183.485,138.96"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="183.485" y="97.02" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> serial interface</text>
+<text x="183.485" y="120.42" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> (serial_eval)</text>
+<path d="M17.16,215.28L349.81,215.28A15 15 0 0 0 364.81 200.28L364.81,159.72A15 15 0 0 0 349.81 144.72L17.16,144.72A15 15 0 0 0 2.16 159.72L2.16,200.28A15 15 0 0 0 17.16 215.28Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="183.485" y="159.84" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Microcontroller (NUCLEO_F401RE)</text>
+<text x="183.485" y="180" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Micropython (mpy_edukit.py, ucontrol.py,</text>
+<text x="183.485" y="200.16" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">uL6474.py, uencoder.py, urepl.py)</text>
+<polygon points="183.485,215.28 187.805,226.8 179.165,226.8" style="fill:rgb(0,0,0)"/>
+<polygon points="183.485,287.28 179.165,275.76 187.805,275.76" style="fill:rgb(0,0,0)"/>
+<path d="M183.485,221.04L183.485,281.52"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="183.485" y="239.58" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> SPI</text>
+<text x="183.485" y="262.98" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> (uL6474.py)</text>
+<path d="M131.899,337.68L235.07,337.68A15 15 0 0 0 250.07 322.68L250.07,302.28A15 15 0 0 0 235.07 287.28L131.899,287.28A15 15 0 0 0 116.899 302.28L116.899,322.68A15 15 0 0 0 131.899 337.68Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="183.485" y="302.4" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Stepper motor</text>
+<text x="183.485" y="322.56" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">driver (L6474)</text>
+<polygon points="183.485,409.68 179.165,398.16 187.805,398.16" style="fill:rgb(0,0,0)"/>
+<path d="M183.485,337.68L183.485,403.92"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M131.957,439.92L235.013,439.92A15 15 0 0 0 250.013 424.92L250.013,424.68A15 15 0 0 0 235.013 409.68L131.957,409.68A15 15 0 0 0 116.957 424.68L116.957,424.92A15 15 0 0 0 131.957 439.92Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="183.485" y="424.8" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Stepper motor</text>
+<polygon points="322.013,424.8 310.493,429.12 310.493,420.48" style="fill:rgb(0,0,0)"/>
+<path d="M250.013,424.8L316.253,424.8"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M337.013,439.92L402.744,439.92A15 15 0 0 0 417.744 424.92L417.744,424.68A15 15 0 0 0 402.744 409.68L337.013,409.68A15 15 0 0 0 322.013 424.68L322.013,424.92A15 15 0 0 0 337.013 439.92Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="369.878" y="424.8" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Pendulum</text>
+<polygon points="489.744,424.8 478.224,429.12 478.224,420.48" style="fill:rgb(0,0,0)"/>
+<path d="M417.744,424.8L483.984,424.8"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M504.744,439.92L556.421,439.92A15 15 0 0 0 571.421 424.92L571.421,424.68A15 15 0 0 0 556.421 409.68L504.744,409.68A15 15 0 0 0 489.744 424.68L489.744,424.92A15 15 0 0 0 504.744 439.92Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="530.582" y="424.8" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Encoder</text>
+<polygon points="364.81,180 376.33,175.68 376.33,184.32" style="fill:rgb(0,0,0)"/>
+<path d="M530.582,409.68L530.582,180L370.57,180"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
 </svg>

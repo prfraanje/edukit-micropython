@@ -1,5 +1,14 @@
-arrow right 200% "Markdown" "Source"
-box rad 10px "Markdown" "Formatter" "(markdown.c)" fit
-arrow right 200% "HTML+SVG" "Output"
-arrow <-> down 70% from last box.s
-box same "Pikchr" "Formatter" "(pikchr.c)" fit
+    down
+PC: box rad 10px "User interface" "Python on PC" "(textual_mpy_edukit.py)" fit
+    arrow <-> " serial interface" ljust " (serial_eval)" ljust
+MC: box rad 10px "Microcontroller (NUCLEO_F401RE)" "Micropython (mpy_edukit.py, ucontrol.py," "uL6474.py, uencoder.py, urepl.py)" fit
+    arrow <-> " SPI" ljust " (uL6474.py)" ljust
+    box rad 10px "Stepper motor" "driver (L6474)" fit
+    arrow
+    box rad 10px "Stepper motor" fit
+    right
+    arrow
+    box rad 10px "Pendulum" fit
+    arrow
+EN: box rad 10px "Encoder" fit
+    arrow from EN.n up until even with MC.e then left to MC.e

@@ -121,24 +121,12 @@ You may need to increase your terminal size. Since  [Textual](https://textual.te
 7. Note that the prompts only allow single line input.
 8. The results returned by python as well as micropython are stored in python (left field) in the variables `python_results` and `micropython_results`, so they can be accessed later when needed.
 9. The vertical bar on the right contains a number of settings (radiobuttons) that are directly connected to variables on the microcontroller, e.g. to switch between PID and state-space control, to turn on/off the PID controller (`pid.run`), and to turn off/on the PID controller for the stepper motor (`pid.run1`) and the encoder (`pid.run2`).
-10. The vertical bar on the left is for logging. Logging is done with two buffers on the microcontroller, that are subsequently filled 
+10. The vertical bar on the left is for logging. Logging is done with two buffers on the microcontroller, that are subsequently filled. If one buffer is full it is send from the microcontroller to the PC over the serial interface, while the other buffer is being filled, and so on. The logging is at the same sampling rate as the controller (100 Hz), but at the moment a buffer is send over the serial interface, the controller may lag a bit. This is visible in the logged signal as non-fluent changes between the buffers. Reducing the sampling rate or replacing the STM F401RE microcontroller with a faster one, preferably with more processing cores, or moving the control task to a ISR (interrupt service routine) may solve this issue. For now we accept the small lags.
 
 
 ## Introduction to the control code 
-
+The following figure gives the architecture of the complete system:
 ![Architecture](./img/architecture.svg)
-In the file [edukit_mp.py](edukit_mp.py) the controller object `pid` is defined (using the `PID2` class defined in [ucontroller.py](ucontroller.py)), which is given as an argument to the `control` task in the asynchronous function `main()`. The [control](https://github.com/prfraanje/edukit-micropython/blob/008c3d5f00a262ea5f277ed561225889d4ec3746/edukit_mp.py#L92C1-L92C1) function has `controller`, such as the `pid` in `main()`, as argument.
-
-https://github.com/prfraanje/edukit-micropython/blob/a35ed6c27966aff251406618f62f111b2bf783a2/edukit_mp.py#L92-L109
-
-
-In this function you see many references to the dictionary `supervisory` defined in the beginning of [edukit_mp.py](edukit_mp.py), that gives room for various supervisory control flags and data acquisition.
-
-https://github.com/prfraanje/edukit-micropython/blob/a35ed6c27966aff251406618f62f111b2bf783a2/edukit_mp.py#L28-L46
-
-The `lock` is currently not used, but can be used when there is a risk of two asynchronous tasks that inentendedly change values in the dictionary almost simultaneously. The 'counter' is a value increased every sampling instant, i.e., every iteration through the loop `while supervisory['control']` in the async function `control`. The value of `supervisory['control']` is a Boolean that is usually `True` but can be set to `False` to end the `control` task. For example this is done in the `repl` function in [urepl.py](urepl.py), when it receives the string `b'stop'` while reading streams from standard input.
-
-## Brief explanation of the main flow of the code
 
 
 ## Dependencies
@@ -149,19 +137,3 @@ The `lock` is currently not used, but can be used when there is a risk of two as
 - [mpremote](https://docs.micropython.org/en/latest/reference/mpremote.html), tested with verion 1.24.0
 
 
-## Changing and cross-compiling the micropython code
-If you change the code for the microcontroller, you should recompile the corresponding `mpy` file. You can do this with the tool `mpy-cross`. Install it with `pip`:
-```
-pip install --user mpy-cross
-```
-Then, e.g. if you change `ucontrol.py` regenerate the byte-code in `ucontrol.mpy` with, executing at the command line
-```
-mpy-cross -march=armv7emsp ucontrol.py
-```
-If you have multiple files that need to be compiled, execute the command for every file separately. You may also add optimization flags such as `-O2` or `-O3`, at the expense of the loss of informative feedback of errors. For more information, see the help: `mpy-cross --help` and online documentation such as [MicroPython .mpy files](https://docs.micropython.org/en/latest/reference/mpyfiles.html#).
-
-Do not forget  to upload the new `.mpy` files to the microcontroller, e.g. by
-```
-rshell -p COM4 cp ucontrol.mpy /flash/
-```
-Note, that if you go for advanced stuff in maximizing for speed using the "Native" or "Viper" code emitters, as explained [here](https://docs.micropython.org/en/latest/reference/speed_python.html) you may need to compile `mpy-cross` and `micropython` yourself, such that they completely corresponds with the same version and microcontroller architecture. For more information see e.g. [MicroPython port to STM32 MCUs](https://github.com/micropython/micropython/tree/master/ports/stm32) at the micropython github. 
