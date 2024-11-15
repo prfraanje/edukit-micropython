@@ -72,11 +72,11 @@ class TimeDisplay(Static):
             
         for i in range(len(data)): self.plot_history[i].append(data[i])
         self.plot_output[0].plt.clear_data()
-        self.plot_output[0].plt.scatter(self.plot_history[0],yside='left',label='stepper steps') #,marker='fhd')
-        self.plot_output[0].plt.scatter(self.plot_history[1],yside='right',label='encoder ticks') #,marker='fhd')
+        self.plot_output[0].plt.scatter(self.plot_history[0],yside='left',label='stepper steps',marker='fhd')
+        self.plot_output[0].plt.scatter(self.plot_history[1],yside='right',label='encoder ticks',marker='fhd')
         self.plot_output[0].refresh()
         self.plot_input[0].plt.clear_data()
-        self.plot_input[0].plt.scatter(self.plot_history[2],yside='left',label='control') #,marker='fhd')
+        self.plot_input[0].plt.scatter(self.plot_history[2],yside='left',label='control',marker='fhd')
         self.plot_input[0].refresh()
         
 
@@ -198,7 +198,15 @@ class IDE(App):
     async def handle_python_input(self, event: Input.Submitted) -> None:
         global python_tasks, python_results
         #app.query_one('#python_input').suggester._suggestions.append(event.value) # does not work??
-        app.query_one('#python_input').suggester._suggestions.append(event.value) # does not work??        
+        cache = app.query_one('#python_input').suggester.cache
+        value = event.value
+        i = 1
+        while value[0:i] in cache:
+            i+=1
+            if i==len(value):
+                break
+        app.query_one('#python_input').suggester.cache[value[0:i]]=value
+        app.query_one('#python_input').suggester._suggestions.append(event.value) #       does not work??
             
         self.query_one("#python_input").clear()
 
