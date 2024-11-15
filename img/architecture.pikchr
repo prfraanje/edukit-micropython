@@ -1,8 +1,8 @@
     down
-PC: box rad 10px "User interface" "Python on PC" "(textual_mpy_edukit.py)" fit
+PC: box rad 10px "User interface" "Python on PC" "(textual_mpy_edukit.py)" mono fit
     arrow <-> " serial interface" ljust " (serial_eval)" ljust
-MC: box rad 10px "Microcontroller (NUCLEO_F401RE)" "Micropython (mpy_edukit.py, ucontrol.py," "uL6474.py, uencoder.py, urepl.py)" fit
-    arrow <-> " SPI" ljust " (uL6474.py)" ljust
+MC: box rad 10px "Microcontroller (NULCEO F401RE)" "Micropython" "(mpy_edukit.py, ucontrol.py," mono "uL6474.py, uencoder.py, urepl.py)" mono fit
+    arrow <-> " SPI" ljust " (uL6474.py)" mono ljust
     box rad 10px "Stepper motor" "driver (L6474)" fit
     arrow
     box rad 10px "Stepper motor" fit
@@ -11,4 +11,4 @@ MC: box rad 10px "Microcontroller (NUCLEO_F401RE)" "Micropython (mpy_edukit.py, 
     box rad 10px "Pendulum" fit
     arrow
 EN: box rad 10px "Encoder" fit
-    arrow from EN.n up until even with MC.e then left to MC.e
+    arrow from EN.n up until even with MC.e then to MC.e

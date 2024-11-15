@@ -1,37 +1,38 @@
-<svg xmlns='http://www.w3.org/2000/svg' viewBox="0 0 573.581 442.08">
-<path d="M92.04,72.72L274.93,72.72A15 15 0 0 0 289.93 57.72L289.93,17.16A15 15 0 0 0 274.93 2.16L92.04,2.16A15 15 0 0 0 77.04 17.16L77.04,57.72A15 15 0 0 0 92.04 72.72Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="183.485" y="17.28" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">User interface</text>
-<text x="183.485" y="37.44" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Python on PC</text>
-<text x="183.485" y="57.6" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">(textual_mpy_edukit.py)</text>
-<polygon points="183.485,72.72 187.805,84.24 179.165,84.24" style="fill:rgb(0,0,0)"/>
-<polygon points="183.485,144.72 179.165,133.2 187.805,133.2" style="fill:rgb(0,0,0)"/>
-<path d="M183.485,78.48L183.485,138.96"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="183.485" y="97.02" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> serial interface</text>
-<text x="183.485" y="120.42" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> (serial_eval)</text>
-<path d="M17.16,215.28L349.81,215.28A15 15 0 0 0 364.81 200.28L364.81,159.72A15 15 0 0 0 349.81 144.72L17.16,144.72A15 15 0 0 0 2.16 159.72L2.16,200.28A15 15 0 0 0 17.16 215.28Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="183.485" y="159.84" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Microcontroller (NUCLEO_F401RE)</text>
-<text x="183.485" y="180" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Micropython (mpy_edukit.py, ucontrol.py,</text>
-<text x="183.485" y="200.16" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">uL6474.py, uencoder.py, urepl.py)</text>
-<polygon points="183.485,215.28 187.805,226.8 179.165,226.8" style="fill:rgb(0,0,0)"/>
-<polygon points="183.485,287.28 179.165,275.76 187.805,275.76" style="fill:rgb(0,0,0)"/>
-<path d="M183.485,221.04L183.485,281.52"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="183.485" y="239.58" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> SPI</text>
-<text x="183.485" y="262.98" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> (uL6474.py)</text>
-<path d="M131.899,337.68L235.07,337.68A15 15 0 0 0 250.07 322.68L250.07,302.28A15 15 0 0 0 235.07 287.28L131.899,287.28A15 15 0 0 0 116.899 302.28L116.899,322.68A15 15 0 0 0 131.899 337.68Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="183.485" y="302.4" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Stepper motor</text>
-<text x="183.485" y="322.56" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">driver (L6474)</text>
-<polygon points="183.485,409.68 179.165,398.16 187.805,398.16" style="fill:rgb(0,0,0)"/>
-<path d="M183.485,337.68L183.485,403.92"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M131.957,439.92L235.013,439.92A15 15 0 0 0 250.013 424.92L250.013,424.68A15 15 0 0 0 235.013 409.68L131.957,409.68A15 15 0 0 0 116.957 424.68L116.957,424.92A15 15 0 0 0 131.957 439.92Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="183.485" y="424.8" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Stepper motor</text>
-<polygon points="322.013,424.8 310.493,429.12 310.493,420.48" style="fill:rgb(0,0,0)"/>
-<path d="M250.013,424.8L316.253,424.8"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M337.013,439.92L402.744,439.92A15 15 0 0 0 417.744 424.92L417.744,424.68A15 15 0 0 0 402.744 409.68L337.013,409.68A15 15 0 0 0 322.013 424.68L322.013,424.92A15 15 0 0 0 337.013 439.92Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="369.878" y="424.8" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Pendulum</text>
-<polygon points="489.744,424.8 478.224,429.12 478.224,420.48" style="fill:rgb(0,0,0)"/>
-<path d="M417.744,424.8L483.984,424.8"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<path d="M504.744,439.92L556.421,439.92A15 15 0 0 0 571.421 424.92L571.421,424.68A15 15 0 0 0 556.421 409.68L504.744,409.68A15 15 0 0 0 489.744 424.68L489.744,424.92A15 15 0 0 0 504.744 439.92Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
-<text x="530.582" y="424.8" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Encoder</text>
-<polygon points="364.81,180 376.33,175.68 376.33,184.32" style="fill:rgb(0,0,0)"/>
-<path d="M530.582,409.68L530.582,180L370.57,180"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<svg xmlns='http://www.w3.org/2000/svg' viewBox="0 0 553.882 462.24">
+<path d="M64.392,72.72L263.179,72.72A15 15 0 0 0 278.179 57.72L278.179,17.16A15 15 0 0 0 263.179 2.16L64.392,2.16A15 15 0 0 0 49.392 17.16L49.392,57.72A15 15 0 0 0 64.392 72.72Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="163.786" y="17.28" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">User interface</text>
+<text x="163.786" y="37.44" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Python on PC</text>
+<text x="163.786" y="57.6" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">(textual_mpy_edukit.py)</text>
+<polygon points="163.786,72.72 168.106,84.24 159.466,84.24" style="fill:rgb(0,0,0)"/>
+<polygon points="163.786,144.72 159.466,133.2 168.106,133.2" style="fill:rgb(0,0,0)"/>
+<path d="M163.786,78.48L163.786,138.96"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="163.786" y="97.02" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> serial interface</text>
+<text x="163.786" y="120.42" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> (serial_eval)</text>
+<path d="M17.16,235.44L310.411,235.44A15 15 0 0 0 325.411 220.44L325.411,159.72A15 15 0 0 0 310.411 144.72L17.16,144.72A15 15 0 0 0 2.16 159.72L2.16,220.44A15 15 0 0 0 17.16 235.44Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="163.786" y="159.84" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Microcontroller (NULCEO F401RE)</text>
+<text x="163.786" y="180" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Micropython</text>
+<text x="163.786" y="200.16" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">(mpy_edukit.py, ucontrol.py,</text>
+<text x="163.786" y="220.32" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">uL6474.py, uencoder.py, urepl.py)</text>
+<polygon points="163.786,235.44 168.106,246.96 159.466,246.96" style="fill:rgb(0,0,0)"/>
+<polygon points="163.786,307.44 159.466,295.92 168.106,295.92" style="fill:rgb(0,0,0)"/>
+<path d="M163.786,241.2L163.786,301.68"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="163.786" y="259.74" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> SPI</text>
+<text x="163.786" y="283.14" text-anchor="start" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central"> (uL6474.py)</text>
+<path d="M112.2,357.84L215.371,357.84A15 15 0 0 0 230.371 342.84L230.371,322.44A15 15 0 0 0 215.371 307.44L112.2,307.44A15 15 0 0 0 97.2 322.44L97.2,342.84A15 15 0 0 0 112.2 357.84Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="163.786" y="322.56" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Stepper motor</text>
+<text x="163.786" y="342.72" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">driver (L6474)</text>
+<polygon points="163.786,429.84 159.466,418.32 168.106,418.32" style="fill:rgb(0,0,0)"/>
+<path d="M163.786,357.84L163.786,424.08"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M112.258,460.08L215.314,460.08A15 15 0 0 0 230.314 445.08L230.314,444.84A15 15 0 0 0 215.314 429.84L112.258,429.84A15 15 0 0 0 97.2576 444.84L97.2576,445.08A15 15 0 0 0 112.258 460.08Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="163.786" y="444.96" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Stepper motor</text>
+<polygon points="302.314,444.96 290.794,449.28 290.794,440.64" style="fill:rgb(0,0,0)"/>
+<path d="M230.314,444.96L296.554,444.96"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M317.314,460.08L383.045,460.08A15 15 0 0 0 398.045 445.08L398.045,444.84A15 15 0 0 0 383.045 429.84L317.314,429.84A15 15 0 0 0 302.314 444.84L302.314,445.08A15 15 0 0 0 317.314 460.08Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="350.179" y="444.96" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Pendulum</text>
+<polygon points="470.045,444.96 458.525,449.28 458.525,440.64" style="fill:rgb(0,0,0)"/>
+<path d="M398.045,444.96L464.285,444.96"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M485.045,460.08L536.722,460.08A15 15 0 0 0 551.722 445.08L551.722,444.84A15 15 0 0 0 536.722 429.84L485.045,429.84A15 15 0 0 0 470.045 444.84L470.045,445.08A15 15 0 0 0 485.045 460.08Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="510.883" y="444.96" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Encoder</text>
+<polygon points="325.411,190.08 336.931,185.76 336.931,194.4" style="fill:rgb(0,0,0)"/>
+<path d="M510.883,429.84L510.883,190.08L331.171,190.08"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
 </svg>
