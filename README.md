@@ -74,7 +74,16 @@ You may need to increase your terminal size. Since  [Textual](https://textual.te
    ``` 
    pid.sample
    ```
-   to see the current value of respectively the stepper steps, encoder ticks and the control value. Also the PID controller gains can be returned, for the feedback from the stepper steps:
+   to see the current value of respectively the stepper steps, encoder ticks and the control value. You may also inspect the other attributes of the object `pid` with
+   ```
+   dir(pid)
+   ```
+   And, note that you may get the stepper motor steps and encoder ticks by typing the following lines in the micropython prompts:
+   ```
+   stepper.get_abs_pos_efficient()
+   encoder.value()
+   ```
+   Also the PID controller gains can be returned, for the feedback from the stepper steps:
    ``` 
    pid.Kp1
    pid.Ki1
@@ -115,43 +124,16 @@ You may need to increase your terminal size. Since  [Textual](https://textual.te
 10. The vertical bar on the left is for logging. Logging is done with two buffers on the microcontroller, that are subsequently filled 
 
 
-## Control
-The edukit has two sensor values (see the function `get_both_sensors()` in [edukit_mp.py](edukit_mp.py) that are the input to the dynamic feedback controller. The first one is the number of microsteps of the stepper-motor (for details see the function `get_abs_pos_efficient` in the file [uL6474.py](uL6474.py)) and the encoder value that measures the angle of the pendulum (for details see the definition of the `Encoder` object `enc` in [edukit_mp.py](edukit_mp.py) and the definition of the `Encoder` class in [uencoder.py](uencoder.py)). You can obtain these values, e.g., by entering
-```
-mp get_abs_pos_efficient()
-mp enc.value()
-```
-at the `-> ` Python prompt.
-
-The class `PID2` defined in [ucontroller.py](ucontroller.py) provides two PID controllers labeled 1 for feedback of the stepper-motor microsteps and 2 for feedback of the pendulum encoder. To get the PID parameters of the edukit-controller, you can do
-```
-mp pid.Kp1
-mp pid.Ki1
-mp pid.Kd1
-mp pid.Kp2
-mp pid.Ki2
-mp pid.Kd2
-```
-and of course, you can easily adjust them by (try rather small values, these do not very much):
-```
-mp pid.Kp1 = 0.001
-mp pid.Ki1 = 0.0
-mp pid.Kd1 = 0.0001
-mp pid.Kp2 = 0.001
-mp pid.Ki2 = 0.
-mp pid.Kd2 = 0.0001
-```
-Don't forget to prefix with `mp `!
-For other values (like `pid.sample` and `pid.run1` and `pid.run2`) consult the `PID2` class in `ucontrol.py`.
-
-Because it is a bit tedious to give commands for each individual gain, the Python file [edukit_pc.py](edukit_pc.py) has defined some convenience functions: `get_pid` and `set_pid`. These functions, however, are so called asynchronous functions, because these are defined by `async def` rather than by just `def`. This is necessary, because these functions communicate with the serial-interface through the asynchronous function `ser_eval` that is non-blockingly called by "awaiting". Doing so, enables the Python interpreter to rapidly switch tasks between the plotter, the serial-interface and the REPL, so it looks like these are running in parallel (note, the real plotting is done in another process, the `plot_process` that really runs simultaneously, for more details see e.g. [Multiprocessing-vs-multithreading-vs-asyncio](https://stackoverflow.com/questions/27435284/multiprocessing-vs-multithreading-vs-asyncio) on StackOverflow). Therefore, to run `get_pid` and `set_pid` we also have to await them:
-```
-await get_pid()
-await set_pid(0.001,0.0,0.0001,1)
-```
-Note, these functions are (initially) evaluated on the PC, though they lead to evaluations on the microcontroller, so do not prefix them with `mp `. See the definitions of the functions in [edukit_pc.py](edukit_pc.py) for more details on their operation.
-
 ## Introduction to the control code 
+
+``` pikchr
+arrow right 200% "Markdown" "Source"
+box rad 10px "Markdown" "Formatter" "(markdown.c)" fit
+arrow right 200% "HTML+SVG" "Output"
+arrow <-> down 70% from last box.s
+box same "Pikchr" "Formatter" "(pikchr.c)" fit
+```
+
 In the file [edukit_mp.py](edukit_mp.py) the controller object `pid` is defined (using the `PID2` class defined in [ucontroller.py](ucontroller.py)), which is given as an argument to the `control` task in the asynchronous function `main()`. The [control](https://github.com/prfraanje/edukit-micropython/blob/008c3d5f00a262ea5f277ed561225889d4ec3746/edukit_mp.py#L92C1-L92C1) function has `controller`, such as the `pid` in `main()`, as argument.
 
 https://github.com/prfraanje/edukit-micropython/blob/a35ed6c27966aff251406618f62f111b2bf783a2/edukit_mp.py#L92-L109
