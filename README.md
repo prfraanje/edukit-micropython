@@ -5,52 +5,53 @@
 
 ## Installation
 1. Clone the repository by the following command in the terminal (e.g. Windows: `Win-r` then enter `cmd` or `Win-x` and select Terminal; Ubuntu: `Ctl-Alt-t`):
+   ```
+   git clone https://github.com/prfraanje/edukit-micropython
+   ```
+   or download the zip-file from the green `<> Code` button on the github repository.
 
-```
-git clone https://github.com/prfraanje/edukit-micropython
-```
-or download the zip-file from the green `<> Code` button on the github repository.
 2. If you have not installed Python on your PC install it, and make sure you have the commands `python` and `pip` available at the [command line](https://en.wikipedia.org/wiki/Command-line_interface) (cmd or powershell in Windows, bash or zsh in Linux or Mac). For Windows you may consult [this guide](https://docs.python.org/3/using/windows.html), and if you use the python distribution from (https://python.org) make sure you select the option to add the location of `python.exe` to your `PATH`. Note, you may also need to add the `%LOCALAPPDATA%\Roaming\Python\Python312\Scripts\` (or similar!) directory to your path, so you are able to run `rshell` from the command line (if you have difficulty determining the directory do a search on `rshell.exe` in the File Explorer). For help on adding directories to the `PATH` environment variable, see e.g. [StackOverflow on how to add a folder to path environment variable in windows](https://stackoverflow.com/questions/44272416/how-to-add-a-folder-to-path-environment-variable-in-windows-10-with-screensho).
+
 3. Install the dependencies by the following command in the terminal (in the following we leave out "in the terminal", because the terminal will be used all over again):
+   ``` 
+   pip install -r requirements.txt
+   ```
+   this installs the python modules that are necessary on the PC side.
 
-``` 
-pip install -r requirements.txt
-```
-this installs the python modules that are necessary on the PC side.
 4. On Windows it may be needed to install the [STSW-LINK009](https://www.st.com/en/development-tools/stsw-link009.html) ST-LINK, ST-LINK/V2, ST-LINK/V2-1, STLINK-V3 USB driver signed for Windows7, Windows8, Windows10 from ST Microsystems.
+
 5. On the microcontroller Micropython (we used v1.24), see [Micropython for NUCLEO_F401RE](https://micropython.org/download/NUCLEO_F401RE/), should be flashed (this can be done easily by copying the `hex`-file to the usb-drive that appears when connecting the microcontroller with the PC, alternatives are using the python IDE [Thonny](https://thonny.org), compiling micropython from source, etc.).
+
 6. Copy the files
+   ```
+   uL6474.py
+   uencoder.py
+   ucontrol.py
+   urepl.py
+   mpy_edukit.py
+   ```
+   or preferably their compiled (`mpy`) versions (see below)
+   ```
+   uL6474.mpy
+   uencoder.mpy
+   ucontrol.mpy
+   urepl.mpy
+   mpy_edukit.mpy
+   ```
+   to the `/flash` folder on the microcontroller. There are several tools to do this: `mpremote`, `rshell`, etc. Under Windows I was not able to run these tools succesfully, and one better uses  [Thonny](https://thonny.org), in which one can copy files from and to the microcontroller. Under Linux (or WSL), one simply does
+   ``` 
+   make deploy
+   ```
 
-```
-uL6474.py
-uencoder.py
-ucontrol.py
-urepl.py
-mpy_edukit.py
-```
-or preferably their compiled (`mpy`) versions (see below)
-```
-uL6474.mpy
-uencoder.mpy
-ucontrol.mpy
-urepl.mpy
-mpy_edukit.mpy
-```
-to the `/flash` folder on the microcontroller. There are several tools to do this: `mpremote`, `rshell`, etc. Under Windows I was not able to run these tools succesfully, and one better uses  [Thonny](https://thonny.org), in which one can copy files from and to the microcontroller. Under Linux (or WSL), one simply does
-
-``` 
-make deploy
-```
 7. Make sure the files `boot.py` and `main.py` are removed from the microcontroller, on Linux:
+   ``` 
+   make erase_default
+   ```
 
-``` 
-make erase_default
-```
 8. Run the Textual Micropython Edukit Dynamic Pendulum Control user interface with
-
-``` 
-python textual_mpy_edukit.py
-```
+   ``` 
+   python textual_mpy_edukit.py
+   ```
 
 ## Usage
 - If everything is fine, you should see the screen similar as the picture above, and repeated here:
