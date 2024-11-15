@@ -125,15 +125,7 @@ You may need to increase your terminal size. Since  [Textual](https://textual.te
 
 
 ## Introduction to the control code 
-
-``` pikchr
-arrow right 200% "Markdown" "Source"
-box rad 10px "Markdown" "Formatter" "(markdown.c)" fit
-arrow right 200% "HTML+SVG" "Output"
-arrow <-> down 70% from last box.s
-box same "Pikchr" "Formatter" "(pikchr.c)" fit
-```
-
+![Architecture](./img/architecture.svg)
 In the file [edukit_mp.py](edukit_mp.py) the controller object `pid` is defined (using the `PID2` class defined in [ucontroller.py](ucontroller.py)), which is given as an argument to the `control` task in the asynchronous function `main()`. The [control](https://github.com/prfraanje/edukit-micropython/blob/008c3d5f00a262ea5f277ed561225889d4ec3746/edukit_mp.py#L92C1-L92C1) function has `controller`, such as the `pid` in `main()`, as argument.
 
 https://github.com/prfraanje/edukit-micropython/blob/a35ed6c27966aff251406618f62f111b2bf783a2/edukit_mp.py#L92-L109
