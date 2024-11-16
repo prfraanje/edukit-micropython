@@ -7,7 +7,7 @@
 <polygon points="163.786,144.72 159.466,133.2 168.106,133.2" style="fill:rgb(0,0,0)"/>
 <path d="M163.786,78.48L163.786,138.96"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="163.786" y="97.02" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> serial interface</text>
-<text x="163.786" y="120.42" text-anchor="start" fill="rgb(0,0,0)" dominant-baseline="central"> (serial_eval)</text>
+<text x="163.786" y="120.42" text-anchor="start" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central"> (serial_eval)</text>
 <path d="M17.16,235.44L310.411,235.44A15 15 0 0 0 325.411 220.44L325.411,159.72A15 15 0 0 0 310.411 144.72L17.16,144.72A15 15 0 0 0 2.16 159.72L2.16,220.44A15 15 0 0 0 17.16 235.44Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
 <text x="163.786" y="159.84" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Microcontroller (NULCEO F401RE)</text>
 <text x="163.786" y="180" text-anchor="middle" fill="rgb(0,0,0)" dominant-baseline="central">Micropython</text>

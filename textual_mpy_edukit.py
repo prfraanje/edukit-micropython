@@ -116,6 +116,7 @@ class IDE(App):
                     yield Switch(value=True,animate=False,id='datetimeswitch')
                 yield Label(self.logtext,id='loglabel')
                 yield Button('Log Data',id='log_data_button')
+                yield Placeholder("",id='placeholder_left_bar')
             with Vertical(id='middle_bar'): # middle bar, plots and repl's
                 #yield Label("Press Ctrl+Z tot suspend.")
                 yield TimeDisplay(id='timer_plots')

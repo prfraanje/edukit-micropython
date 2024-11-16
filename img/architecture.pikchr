@@ -1,6 +1,6 @@
     down
 PC: box rad 10px "User interface" "Python on PC" "(textual_mpy_edukit.py)" mono fit
-    arrow <-> " serial interface" ljust " (serial_eval)" ljust
+    arrow <-> " serial interface" ljust " (serial_eval)" mono ljust
 MC: box rad 10px "Microcontroller (NULCEO F401RE)" "Micropython" "(mpy_edukit.py, ucontrol.py," mono "uL6474.py, uencoder.py, urepl.py)" mono fit
     arrow <-> " SPI" ljust " (uL6474.py)" mono ljust
     box rad 10px "Stepper motor" "driver (L6474)" fit
