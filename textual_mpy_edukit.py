@@ -21,24 +21,28 @@ import matplotlib.pyplot as plt
 #plt.ion() # enable automatic drawing mode
 
 from textual.app import App, ComposeResult
+from textual.binding import Binding, BindingType
 from textual import on
 from textual.screen import Screen
-from textual.binding import Binding
 from textual.containers import Horizontal, Vertical
 from textual.reactive import reactive
 from textual.widgets import Header, Footer, Static, Button, Label, Input, RichLog, RadioButton, RadioSet, Switch, Rule
-from textual.suggester import SuggestFromList
 
 from textual_plotext import PlotextPlot
 
+from textual_customizations import CustomSuggester, CustomInput
 
 END_PATTERN = b'\x04'
 SAMPLING_TIME = 0.01
 LOG_BUF_LEN = 256
 log_data = np.zeros((3*LOG_BUF_LEN,3))
 
-completions = ["micropython_results", "python_results", "micropython_tasks", "python_tasks",
-               "pid.","pid.set_gains1()","pid.pid_set_gains2()",
+suggestions = ["micropython_results", "python_results", "micropython_tasks", "python_tasks",
+               "log_data", 
+               ]
+mpy_suggestions = ["micropythonn_results","micropython_tasks",
+                   "pid.", "pid.get_gains1()", "pid.get_gains2()", "pid.set_gains1()","pid.pid_set_gains2()",
+                   "encoder.", "stepper.","supervisory", "supervisory['reference_add']",
                ]
 
 
@@ -86,7 +90,7 @@ class TimeDisplay(Static):
         hours, minutes = divmod(minutes, 60)
         self.update(f"{hours:02,.0f}:{minutes:02.0f}:{seconds:05.2f}")
 
-
+        
 class IDE(App):
     TITLE = "Edukit Pendulum Control"
     SUB_TITLE = "with micropython and textual"
@@ -125,11 +129,11 @@ class IDE(App):
                 with Horizontal():
                     with Vertical():
                         yield RichLog(highlight=True,markup=True,auto_scroll=True,max_lines=1000,id="python_output")
-                        yield Input(placeholder="Python prompt",id="python_input",suggester=SuggestFromList(completions))
+                        yield CustomInput(placeholder="Python prompt",id="python_input",suggester=CustomSuggester(suggestions))
 
                     with Vertical():
                         yield RichLog(highlight=True,markup=True,auto_scroll=True,max_lines=1000,id="micropython_output")
-                        yield Input(placeholder="MicroPython prompt",id="micropython_input",suggester=SuggestFromList(completions))
+                        yield CustomInput(placeholder="MicroPython prompt",id="micropython_input",suggester=CustomSuggester(mpy_suggestions))
             with Vertical(id='right_bar'): # right bar, micropython buttons
                 # RadioSet choice for pid vs state-space
                 # input fields for pid gains (optional)
@@ -147,16 +151,32 @@ class IDE(App):
 
     def on_mount(self):
         global log_data
-        self.query_one("#python_output").can_focus=False
-        self.query_one("#micropython_output").can_focus=False
+        python_output = self.query_one("#python_output")
+        python_output.can_focus=False
+        python.write("""
+        At the [bold red]Python REPL[/bold red] you can use:
+          [blue]up/down arrows[/blue] to scroll backward/forward through past inputs,
+          [blue]right arrow[/blue] to select suggestion or go right
+        Also see [magenta]https://textual.textualize.io/widgets/input/[/magenta]
+        Note past results from python and micropython can be accessed through:
+        [green]python_results[i][/green]
+        [green]micropython_results[i][/green]
+        where [italic]i = 0, 1, ...[/italic] refers to the last output, the one before, etc.
+        """)
+        micropython_output = self.query_one("#micropython_output")
+        micropython_output.can_focus=False
+        micropython.write("""
+        At the [bold red]Micropython REPL[/bold red] you can use:
+          [blue]up/down arrows[/blue] to scroll backward/forward through past inputs,
+          [blue]right arrow[/blue] to select suggestion or go right
+        Also see [magenta]https://textual.textualize.io/widgets/input/ [/magenta]       
+        """)
 
         plt1 = self.query_one('#plot_output').plt
         plt1.title("Plot output (stepper steps and encoder ticks)") # to apply a title
         plt2 = self.query_one('#plot_input').plt
         plt2.title("Plot input (control)") # to apply a title
         
-        #plt2 = self.query_one('#plot2').plt
-        #plt2.title("Plot2") # to apply a title
 
     @on(Button.Pressed,'#log_data_button')
     async def handle_log_data(self, event: Button.Pressed) -> None:
@@ -198,19 +218,11 @@ class IDE(App):
     @on(Input.Submitted,"#python_input")
     async def handle_python_input(self, event: Input.Submitted) -> None:
         global python_tasks, python_results
-        #app.query_one('#python_input').suggester._suggestions.append(event.value) # does not work??
-        cache = app.query_one('#python_input').suggester.cache
-        value = event.value
-        i = 1
-        while value[0:i] in cache:
-            i+=1
-            if i==len(value):
-                break
-        app.query_one('#python_input').suggester.cache[value[0:i]]=value
-        app.query_one('#python_input').suggester._suggestions.append(event.value) #       does not work??
-            
-        self.query_one("#python_input").clear()
-
+        input = event.input
+        input.suggester.add_suggestion(event.value)
+        input.backward_forward_index = None
+        input.clear()
+ 
         result=None
         if event.value[0:6] == 'await ':
             task = asyncio.create_task(eval(event.value[6:]))
@@ -248,7 +260,11 @@ class IDE(App):
     @on(Input.Submitted,"#micropython_input")
     async def handle_micropython_input(self, event: Input.Submitted) -> None:
         global micropython_tasks, micropython_results, micropython_serial_interface
-        self.query_one("#micropython_input").clear()
+        input = event.input
+        input.suggester.add_suggestion(event.value)
+        input.backward_forward_index = None
+        input.clear()
+                     
         result = None
         if event.value[0:17] == 'micropython_tasks':
             result = eval(event.value,globals())

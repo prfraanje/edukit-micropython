@@ -1,0 +1,11 @@
+//      down
+//REPL: box rad 10px "repl task" "read, eval/exec, print" "urepl.py" mono fit
+//      arrow <->
+//CTRL: box rad 10px "control(pid,state_space)" mono "mpy_edukit.py" mono "run controller and some recording/logging" fit
+//      arrow <->
+//CALC: box rad 10px "PID.control" mono "ucontrol.py" mono  "evaluate one run of PID controller" fit
+//      arrow <->
+//      box rad 10px "PID.get_sensor()" mono
+
+
+//	box rad 10px "pid" mono "PID class object" mono

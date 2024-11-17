@@ -1,4 +1,4 @@
-from array import array
+ofrom array import array
 import micropython
 
 class PID():

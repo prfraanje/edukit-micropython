@@ -8,7 +8,7 @@
    ```
    git clone https://github.com/prfraanje/edukit-micropython
    ```
-   or download the zip-file from the green <span style="color:green">`<> Code`</span> button on the github repository.
+   or download the zip-file from the green `<> Code` button on the github repository.
 
 2. If you have not installed Python on your PC install it, and make sure you have the commands `python` and `pip` available at the [command line](https://en.wikipedia.org/wiki/Command-line_interface) (cmd or powershell in Windows, bash or zsh in Linux or Mac). For Windows you may consult [this guide](https://docs.python.org/3/using/windows.html), and if you use the python distribution from (https://python.org) make sure you select the option to add the location of `python.exe` to your `PATH`. Note, you may also need to add the `%LOCALAPPDATA%\Roaming\Python\Python312\Scripts\` (or similar!) directory to your path, so you are able to run `rshell` from the command line (if you have difficulty determining the directory do a search on `rshell.exe` in the File Explorer). For help on adding directories to the `PATH` environment variable, see e.g. [StackOverflow on how to add a folder to path environment variable in windows](https://stackoverflow.com/questions/44272416/how-to-add-a-folder-to-path-environment-variable-in-windows-10-with-screensho).
 
@@ -78,10 +78,18 @@ You may need to increase your terminal size. Since  [Textual](https://textual.te
    ```
    dir(pid)
    ```
-   And, note that you may get the stepper motor steps and encoder ticks by typing the following lines in the micropython prompts:
+   And, note that you may get the stepper motor steps and encoder ticks by typing the following lines in the micropython prompts (`stepper` is an instance of the `L6474` class, `encoder` is an instance of the `Encoder` class):
    ```
    stepper.get_abs_pos_efficient()
    encoder.value()
+   ```
+   or send a control value, e.g. 100, to the stepper motor:
+   ```
+   stepper.set_period_direction(100)
+   ```
+   Don't forget to set it to zero to prevent the wires get twisted too much:
+   ```
+   stepper.set_period_direction(0)
    ```
    Also the PID controller gains can be returned, for the feedback from the stepper steps:
    ``` 
@@ -103,9 +111,22 @@ You may need to increase your terminal size. Since  [Textual](https://textual.te
    ``` 
    pid.get_gains1()
    pid.get_gains2()
-   pid.set_gains1(0.1,0.0001,0.001
-   pid.set_gains2(0.1,0.0001,0.001
+   pid.set_gains1(0.1,0.0001,0.001)
+   pid.set_gains2(0.1,0.0001,0.001)
    ```
+   Note, that you can do
+   ```
+   Kp1, Ki1, Kd1 = pid.get_gains1()
+   ```
+   However, the variables `Kp1`, `Ki1` and `Kd1` on the left hand will be in Micropython no the microcontroller. If you want to have the values at the python prompt, you can use the `micropython_results` variable in python. For example, run at the micropython prompt (right prompt):
+   ```
+   pid.get_gains1()
+   ```
+   and than on the python prompt (left prompt), you can do:
+   ```
+   Kp1, Ki1, Kd1 = micropython_results[0]
+   ```
+   The indexing with `[0]` refers to the last micropython output, `[1]` refers to the one before, etc.
 6. The reference (setpoint) value for the feedback from the stepper motor is stored in
    ```
    pid.r1
@@ -122,7 +143,7 @@ You may need to increase your terminal size. Since  [Textual](https://textual.te
 8. The results returned by python as well as micropython are stored in python (left field) in the variables `python_results` and `micropython_results`, so they can be accessed later when needed.
 9. The vertical bar on the right contains a number of settings (radiobuttons) that are directly connected to variables on the microcontroller, e.g. to switch between PID and state-space control, to turn on/off the PID controller (`pid.run`), and to turn off/on the PID controller for the stepper motor (`pid.run1`) and the encoder (`pid.run2`).
 10. The vertical bar on the left is for logging. Logging is done with two buffers on the microcontroller, that are subsequently filled. If one buffer is full it is send from the microcontroller to the PC over the serial interface, while the other buffer is being filled, and so on. The logging is at the same sampling rate as the controller (100 Hz), but at the moment a buffer is send over the serial interface, the controller may lag a bit. This is visible in the logged signal as non-fluent changes between the buffers. Reducing the sampling rate or replacing the STM F401RE microcontroller with a faster one, preferably with more processing cores, or moving the control task to a ISR (interrupt service routine) may solve this issue. For now we accept the small lags.
-
+11. If you want to exit, close the user interface with `Ctrl-c`, which will nicely end the program on the microcontroller and the user-interaface.
 
 ## Introduction to the control code 
 The following figure gives the architecture of the complete system:
@@ -136,4 +157,23 @@ The following figure gives the architecture of the complete system:
 - [aioserial](https://pypi.org/project/aioserial/), tested with version 1.3.1 (needed for nonblocking asynchronous communication with the serial interface at the python side)
 - [mpremote](https://docs.micropython.org/en/latest/reference/mpremote.html), tested with verion 1.24.0
 
+## Compile the `mpy`-files
+- To compile the `mpy`-files one needs the `mpy-cross` program, that you can install on both Windows and Linux, e.g. by 
+  ```
+  pip install mpy-cross==1.24.0
+  ```
+  Make sure, you give the same version as the version of micropython on the microcontroller.
+- On Linux: Adjust the `Makefile` according to the location of the `mpy-cross` executable
+- On Linux: Compile the micropython files with
+  ```
+  make
+  ```
+- On Windows: Evaluate 
+  ```
+  mpy-cross -march=armv7emsp -O3 -X emit=bytecode mpy_edukit.py
+  mpy-cross -march=armv7emsp -O3 -X emit=bytecode ucontrol.py
+  mpy-cross -march=armv7emsp -O3 -X emit=bytecode uencoder.py
+  mpy-cross -march=armv7emsp -O3 -X emit=bytecode uL6474.py
+  mpy-cross -march=armv7emsp -O3 -X emit=bytecode urepl.py
+  ```
 

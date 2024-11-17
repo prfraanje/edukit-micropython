@@ -5,3 +5,4 @@ share/
 lib64
 pyvenv.cfg
 *.mpy
+sandbox/
