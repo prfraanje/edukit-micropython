@@ -1,7 +1,7 @@
 from collections import deque
 from typing import TYPE_CHECKING, ClassVar, Iterable
 
-from textual.binding import Binding
+from textual.binding import Binding, BindingType
 from textual.suggester import Suggester
 from textual.widgets import Input
 

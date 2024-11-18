@@ -21,12 +21,12 @@ import matplotlib.pyplot as plt
 #plt.ion() # enable automatic drawing mode
 
 from textual.app import App, ComposeResult
-from textual.binding import Binding, BindingType
+from textual.binding import Binding
 from textual import on
 from textual.screen import Screen
 from textual.containers import Horizontal, Vertical
 from textual.reactive import reactive
-from textual.widgets import Header, Footer, Static, Button, Label, Input, RichLog, RadioButton, RadioSet, Switch, Rule
+from textual.widgets import Header, Footer, Static, Button, Label, Input, Placeholder, RichLog, RadioButton, RadioSet, Switch, Rule
 
 from textual_plotext import PlotextPlot
 
@@ -120,7 +120,6 @@ class IDE(App):
                     yield Switch(value=True,animate=False,id='datetimeswitch')
                 yield Label(self.logtext,id='loglabel')
                 yield Button('Log Data',id='log_data_button')
-                yield Placeholder("",id='placeholder_left_bar')
             with Vertical(id='middle_bar'): # middle bar, plots and repl's
                 #yield Label("Press Ctrl+Z tot suspend.")
                 yield TimeDisplay(id='timer_plots')
@@ -153,22 +152,22 @@ class IDE(App):
         global log_data
         python_output = self.query_one("#python_output")
         python_output.can_focus=False
-        python.write("""
+        python_output.write("""
         At the [bold red]Python REPL[/bold red] you can use:
-          [blue]up/down arrows[/blue] to scroll backward/forward through past inputs,
-          [blue]right arrow[/blue] to select suggestion or go right
+          [deep_sky_blue3]up/down arrows[/deep_sky_blue3] to scroll backward/forward through past inputs,
+          [deep_sky_blue3]right arrow[/deep_sky_blue3] to select suggestion or go right
         Also see [magenta]https://textual.textualize.io/widgets/input/[/magenta]
         Note past results from python and micropython can be accessed through:
-        [green]python_results[i][/green]
-        [green]micropython_results[i][/green]
+        [green]python_results[/green]
+        [green]micropython_results[/green]
         where [italic]i = 0, 1, ...[/italic] refers to the last output, the one before, etc.
         """)
         micropython_output = self.query_one("#micropython_output")
         micropython_output.can_focus=False
-        micropython.write("""
+        micropython_output.write("""
         At the [bold red]Micropython REPL[/bold red] you can use:
-          [blue]up/down arrows[/blue] to scroll backward/forward through past inputs,
-          [blue]right arrow[/blue] to select suggestion or go right
+          [deep_sky_blue3]up/down arrows[/deep_sky_blue3] to scroll backward/forward through past inputs,
+          [deep_sky_blue3]right arrow[/deep_sky_blue3] to select suggestion or go right
         Also see [magenta]https://textual.textualize.io/widgets/input/ [/magenta]       
         """)
 

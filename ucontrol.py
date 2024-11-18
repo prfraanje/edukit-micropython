@@ -1,4 +1,4 @@
-ofrom array import array
+from array import array
 import micropython
 
 class PID():
@@ -135,7 +135,8 @@ class PID():
                 self.sample[2] = self.u + supervis['control_sequence'][supervis['control_counter']]
                 supervis['control_counter'] += 1
         else:
-            self.set_actuator(self.u)
+            if self.run:
+                self.set_actuator(self.u)
             self.sample[2] = self.u
             
         self.sample[0] = self.y[0]
