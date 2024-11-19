@@ -34,7 +34,7 @@ from textual_customizations import CustomSuggester, CustomInput
 
 END_PATTERN = b'\x04'
 SAMPLING_TIME = 0.01
-LOG_BUF_LEN = 256
+LOG_BUF_LEN = 128
 log_data = np.zeros((3*LOG_BUF_LEN,3))
 
 suggestions = ["micropython_results", "python_results", "micropython_tasks", "python_tasks",
@@ -115,11 +115,14 @@ class IDE(App):
                 yield Static(f"Number of buffers: ")
                 yield Static(f"(One buffer is {LOG_BUF_LEN} samples.)")                
                 yield Input(type="integer",value='1',id='num_bufs_input')
-                with Vertical():
-                    yield Static("Append datetime: ")
-                    yield Switch(value=True,animate=False,id='datetimeswitch')
+                yield Static("Append datetime: ")
+                yield Switch(value=True,animate=False,id='datetimeswitch')
                 yield Label(self.logtext,id='loglabel')
                 yield Button('Log Data',id='log_data_button')
+                yield Rule(line_style="ascii")
+                yield RadioButton('reference_add',value=False,id='reference_add')
+                yield RadioButton('control_add',value=False,id='control_add')
+                yield Button('Stepper Zero',id='stepper_zero_button')
             with Vertical(id='middle_bar'): # middle bar, plots and repl's
                 #yield Label("Press Ctrl+Z tot suspend.")
                 yield TimeDisplay(id='timer_plots')
@@ -180,6 +183,10 @@ class IDE(App):
     @on(Button.Pressed,'#log_data_button')
     async def handle_log_data(self, event: Button.Pressed) -> None:
         log_task = asyncio.create_task(self.data_logger())
+
+    @on(Button.Pressed,'#stepper_zero_button')
+    async def handle_stepper_zero_button(self, event: Button.Pressed) -> None:
+        await serial_eval(micropython_serial_interface,'stepper.set_period_direction(0)')
         
     @on(RadioSet.Changed,'#control_type')
     async def handle_radioset_control_type(self, event: RadioSet.Changed) -> None:
@@ -203,6 +210,10 @@ class IDE(App):
             button = 'pid.run2'
         elif button_id == 'ss_run':
             button = 'state_space.run'
+        elif button_id == 'reference_add':
+            button = 'supervisory["reference_add"]'
+        elif button_id == 'control_add':
+            button = 'supervisory["control_add"]'
         else:
             return None
             
@@ -211,6 +222,9 @@ class IDE(App):
         else:
             val = "False"
         await serial_eval(micropython_serial_interface, button + '='+val)
+        # send zero to stepper when control_add is stopped:
+        if (button_id == 'control_add') and (event.value == False):
+            await serial_eval(micropython_serial_interface, 'stepper.set_period_direction(0)')
 
         
 

@@ -17,9 +17,6 @@ Screen {
     width: 1fr;
 }
 
-#placeholder_left_bar {
-    height: 0.4fr;
-}
 
 #plot_output {
     height: 1fr;

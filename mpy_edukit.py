@@ -17,7 +17,7 @@ from urepl import repl
 
 gc.threshold(50000) # total is about 61248
 
-LOG_BUF_LEN = const(256)
+LOG_BUF_LEN = const(128)
 
 stepper = L6474()
 
@@ -211,7 +211,7 @@ async def main():
     #await asyncio.gather(control_task, repl_task)
         
 
-set_control_sequence(1.,10.,-10.,100)
+set_control_sequence(5.,40.,-40.,100)
 set_reference_sequence(0.,20.,-20.,100)
 
 # initialize L6474:
