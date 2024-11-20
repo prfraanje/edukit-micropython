@@ -60,11 +60,13 @@ erase_default:
 	$(RSHELL) rm /flash/boot.py
 	$(RSHELL) rm /flash/main.py
 
-pikchr: architecture.svg
+pikchar: architecture.svg control_flow.svg
 
 architecture.svg: ./img/architecture.pikchr
 	pikchr-cli ./img/architecture.pikchr > ./img/architecture.svg
 
+control_flow.svg: ./img/control_flow.pikchr
+	pikchr-cli ./img/control_flow.pikchr > ./img/control_flow.svg
 
 clean:
 	rm *.mpy
