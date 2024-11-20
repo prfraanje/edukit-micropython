@@ -8,7 +8,7 @@
    ```
    git clone https://github.com/prfraanje/edukit-micropython
    ```
-   or download the zip-file from the green `<> Code` button on the github repository. The advantage of `git clone` would be that you always can pull the latest version of the code with just:
+   or download the zip-file from the green `<> Code` button on the github repository. The advantage of `git clone` would be that, after a `git clone` you always can pull the latest version of the code with just:
    ```
    git pull
    ```
