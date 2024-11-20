@@ -57,8 +57,8 @@ erase_default:
 #	$(MPREMOTE) fs rm :boot.mpy
 #	$(MPREMOTE) fs rm :main.mpy
 
-	$(RSHELL) rm /flash/boot.mpy
-	$(RSHELL) rm /flash/main.mpy
+	$(RSHELL) rm /flash/boot.py
+	$(RSHELL) rm /flash/main.py
 
 pikchr: architecture.svg
 

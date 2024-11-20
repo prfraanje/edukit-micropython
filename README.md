@@ -148,7 +148,8 @@ You may need to increase your terminal size. Since  [Textual](https://textual.te
 ## Introduction to the control code 
 The following figure gives the architecture of the complete system:
 ![Architecture](./img/architecture.svg)
-
+The block diagram of the PID controller is given below (c.f. `ucontrol.py`):
+![PID control](./img/control_flow.svg)
 
 ## Dependencies
 - [Micropython](https://micropython.org) [firmware for Nucleo-F401RE](https://micropython.org/download/NUCLEO_F401RE/) and [mpy-cross](https://gitlab.com/alelec/mpy_cross) tool, tested with version 1.24.0, both should have same version!
