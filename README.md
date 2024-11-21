@@ -8,14 +8,19 @@
    ```
    git clone https://github.com/prfraanje/edukit-micropython
    ```
-   or download the zip-file from the green `<> Code` button on the github repository. The advantage of `git clone` would be that, after a `git clone` you always can pull the latest version of the code with just:
+   or download the zip-file from the green `<> Code` button on the github repository. Make sure you have a terminal and go to the folder `edukit-micropython` with (`cd` stands for change directory, directory is the 'old' word for folder):
+   ```
+   cd edukit-micropython
+   ```
+   The advantage of `git clone` would be that, after a `git clone` you always can pull the latest version of the code with just:
    ```
    git pull
    ```
+   in the folder `edukit-micropython`.
 
 2. If you have not installed Python on your PC install it, and make sure you have the commands `python` and `pip` available at the [command line](https://en.wikipedia.org/wiki/Command-line_interface) (cmd or powershell in Windows, bash or zsh in Linux or Mac). For Windows you may consult [this guide](https://docs.python.org/3/using/windows.html), and if you use the python distribution from (https://python.org) make sure you select the option to add the location of `python.exe` to your `PATH`. Note, you may also need to add the `%LOCALAPPDATA%\Roaming\Python\Python312\Scripts\` (or similar!) directory to your path, so you are able to run `rshell` from the command line (if you have difficulty determining the directory do a search on `rshell.exe` in the File Explorer). For help on adding directories to the `PATH` environment variable, see e.g. [StackOverflow on how to add a folder to path environment variable in windows](https://stackoverflow.com/questions/44272416/how-to-add-a-folder-to-path-environment-variable-in-windows-10-with-screensho).
 
-3. Install the dependencies by the following command in the terminal (in the following we leave out "in the terminal", because the terminal will be used all over again):
+3. Install the dependencies by the following command in the terminal (in the following we leave out "in the terminal", because the terminal will be used all over again, also make sure you are in the folder `edukit-micropython`):
    ``` 
    pip install -r requirements.txt
    ```
@@ -60,6 +65,12 @@
 1. If everything is fine, you should see the screen similar as the picture above, and repeated here:
 ![User interface](./img/textual_mpy_edukit.png)
 You may need to increase your terminal size. Since  [Textual](https://textual.textualize.io/) makes use of Unicode (UTF-8) characters on Windows 10 and older versions not all characters are displayed correctly. One may try to evaluate the command `chcp 650100` before running `python textual_mpy_edukit.py`, or just live with the imperfection.
+
+The following figure gives the architecture of the complete system:
+![Architecture](./img/architecture.svg)
+The following block diagram of the PID controller is given below (c.f. `ucontrol.py`):
+![PID control](./img/control_flow.svg)
+All these pictures may be convenient to better understand the following explanation.
 
 2. In the center you see two plot windows. The upper one shows the sensors: 
    * the steps of the stepper motor in blue, that is retrieved in micropython by evaluating `stepper.get_abs_pos_efficient()`
@@ -146,13 +157,8 @@ You may need to increase your terminal size. Since  [Textual](https://textual.te
 8. The results returned by python as well as micropython are stored in python (left field) in the variables `python_results` and `micropython_results`, so they can be accessed later when needed.
 9. The vertical bar on the right contains a number of settings (radiobuttons) that are directly connected to variables on the microcontroller, e.g. to switch between PID and state-space control, to turn on/off the PID controller (`pid.run`), and to turn off/on the PID controller for the stepper motor (`pid.run1`) and the encoder (`pid.run2`).
 10. The vertical bar on the left is for logging. Logging is done with two buffers on the microcontroller, that are subsequently filled. If one buffer is full it is send from the microcontroller to the PC over the serial interface, while the other buffer is being filled, and so on. The logging is at the same sampling rate as the controller (100 Hz), but at the moment a buffer is send over the serial interface, the controller may lag a bit. This is visible in the logged signal as non-fluent changes between the buffers. Reducing the sampling rate or replacing the STM F401RE microcontroller with a faster one, preferably with more processing cores, or moving the control task to a ISR (interrupt service routine) may solve this issue. For now we accept the small lags.
-11. If you want to exit, close the user interface with `Ctrl-c`, which will nicely end the program on the microcontroller and the user-interaface.
+11. If you want to exit, close the user interface with `Ctrl-c`, which will nicely end the program on the microcontroller and the user-interface.
 
-## Introduction to the control code 
-The following figure gives the architecture of the complete system:
-![Architecture](./img/architecture.svg)
-The block diagram of the PID controller is given below (c.f. `ucontrol.py`):
-![PID control](./img/control_flow.svg)
 
 ## Dependencies
 - [Micropython](https://micropython.org) [firmware for Nucleo-F401RE](https://micropython.org/download/NUCLEO_F401RE/) and [mpy-cross](https://gitlab.com/alelec/mpy_cross) tool, tested with version 1.24.0, both should have same version!
@@ -160,6 +166,7 @@ The block diagram of the PID controller is given below (c.f. `ucontrol.py`):
 - [Textual](https://textual.textualize.io/), tested with version 0.85.1
 - [aioserial](https://pypi.org/project/aioserial/), tested with version 1.3.1 (needed for nonblocking asynchronous communication with the serial interface at the python side)
 - [mpremote](https://docs.micropython.org/en/latest/reference/mpremote.html), tested with verion 1.24.0
+- Further: see `requirements.txt`
 
 ## Compile the `mpy`-files
 - To compile the `mpy`-files one needs the `mpy-cross` program, that you can install on both Windows and Linux, e.g. by 
