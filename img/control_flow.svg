@@ -1,0 +1,50 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox="0 0 1075.67 284.95">
+<polygon points="74.16,73.0261 62.64,77.3461 62.64,68.7061" style="fill:rgb(0,0,0)"/>
+<path d="M2.16,73.0261L68.4,73.0261"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="38.16" y="61.3261" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">pid.r1</text>
+<circle cx="88.3332" cy="73.0261" r="14.1732"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="174.506,73.0261 162.986,77.3461 162.986,68.7061" style="fill:rgb(0,0,0)"/>
+<path d="M102.506,73.0261L168.746,73.0261"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="138.506" y="61.3261" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">pid.e1</text>
+<path d="M189.506,98.2261L407.186,98.2261A15 15 0 0 0 422.186 83.2261L422.186,62.8261A15 15 0 0 0 407.186 47.8261L189.506,47.8261A15 15 0 0 0 174.506 62.8261L174.506,83.2261A15 15 0 0 0 189.506 98.2261Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="298.346" y="62.9461" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">pid.run1</text>
+<text x="298.346" y="83.1061" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">pid.Kp1, pid.Ki1, pid.Kd1</text>
+<polygon points="494.186,73.0261 482.666,77.3461 482.666,68.7061" style="fill:rgb(0,0,0)"/>
+<path d="M422.186,73.0261L488.426,73.0261"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<circle cx="508.36" cy="73.0261" r="14.1732"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="594.533,73.0261 583.013,77.3461 583.013,68.7061" style="fill:rgb(0,0,0)"/>
+<path d="M522.533,73.0261L588.773,73.0261"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<path d="M609.533,109.566L912.461,109.566A15 15 0 0 0 927.461 94.5661L927.461,51.4861A15 15 0 0 0 912.461 36.4861L609.533,36.4861A15 15 0 0 0 594.533 51.4861L594.533,94.5661A15 15 0 0 0 609.533 109.566Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="760.997" y="57.2761" text-anchor="middle" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">pendulum</text>
+<text x="760.997" y="85.6261" text-anchor="middle" fill="rgb(0,0,0)" font-size="125%" dominant-baseline="central">including stepper and encoder</text>
+<polygon points="1012.5,90.034 1000.98,94.354 1000.98,85.714" style="fill:rgb(0,0,0)"/>
+<path d="M927.461,90.034L1006.74,90.034"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="969.981" y="78.334" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">pid.y1</text>
+<polygon points="88.3332,87.1994 92.6532,98.7194 84.0132,98.7194" style="fill:rgb(0,0,0)"/>
+<path d="M927.461,90.034L969.981,90.034L969.981,146.727L88.3332,146.727L88.3332,92.9594"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<text x="88.3332" y="116.963" text-anchor="end" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">- </text>
+<polygon points="74.16,214.758 62.64,219.078 62.64,210.438" style="fill:rgb(0,0,0)"/>
+<path d="M2.16,214.758L68.4,214.758"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="38.16" y="203.058" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">pid.r2</text>
+<circle cx="88.3332" cy="214.758" r="14.1732"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<polygon points="174.506,214.758 162.986,219.078 162.986,210.438" style="fill:rgb(0,0,0)"/>
+<path d="M102.506,214.758L168.746,214.758"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="138.506" y="203.058" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">pid.e2</text>
+<path d="M189.506,239.958L407.186,239.958A15 15 0 0 0 422.186 224.958L422.186,204.558A15 15 0 0 0 407.186 189.558L189.506,189.558A15 15 0 0 0 174.506 204.558L174.506,224.958A15 15 0 0 0 189.506 239.958Z"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="298.346" y="204.678" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">pid.run2</text>
+<text x="298.346" y="224.838" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">pid.Kp2, pid.Ki2, pid.Kd2</text>
+<polygon points="508.36,87.1994 512.68,98.7194 504.04,98.7194" style="fill:rgb(0,0,0)"/>
+<path d="M422.186,214.758L508.36,214.758L508.36,92.9594"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<polygon points="1069.19,56.0183 1057.67,60.3383 1057.67,51.6983" style="fill:rgb(0,0,0)"/>
+<path d="M927.461,56.0183L1063.43,56.0183"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="998.327" y="44.3183" text-anchor="middle" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central">pid.y2</text>
+<polygon points="88.3332,228.932 92.6532,240.452 84.0132,240.452" style="fill:rgb(0,0,0)"/>
+<path d="M1040.85,56.0183L1040.85,282.79L88.3332,282.79L88.3332,234.692"  style="fill:none;stroke-width:2.16;stroke-linejoin:round;stroke:rgb(0,0,0);" />
+<text x="88.3332" y="255.861" text-anchor="end" fill="rgb(0,0,0)" font-size="156.25%" dominant-baseline="central">- </text>
+<polygon points="88.3332,58.8529 84.0132,47.3329 92.6532,47.3329" style="fill:rgb(0,0,0)"/>
+<path d="M88.3332,2.16L88.3332,53.0929"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="88.3332" y="30.5065" text-anchor="start" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central"> reference_add</text>
+<polygon points="508.36,58.8529 504.04,47.3329 512.68,47.3329" style="fill:rgb(0,0,0)"/>
+<path d="M508.36,2.16L508.36,53.0929"  style="fill:none;stroke-width:2.16;stroke:rgb(0,0,0);" />
+<text x="508.36" y="30.5065" text-anchor="start" font-family="monospace" fill="rgb(0,0,0)" dominant-baseline="central"> control_add</text>
+</svg>

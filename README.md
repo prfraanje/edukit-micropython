@@ -8,7 +8,10 @@
    ```
    git clone https://github.com/prfraanje/edukit-micropython
    ```
-   or download the zip-file from the green `<> Code` button on the github repository.
+   or download the zip-file from the green `<> Code` button on the github repository. The advantage of `git clone` would be that, after a `git clone` you always can pull the latest version of the code with just:
+   ```
+   git pull
+   ```
 
 2. If you have not installed Python on your PC install it, and make sure you have the commands `python` and `pip` available at the [command line](https://en.wikipedia.org/wiki/Command-line_interface) (cmd or powershell in Windows, bash or zsh in Linux or Mac). For Windows you may consult [this guide](https://docs.python.org/3/using/windows.html), and if you use the python distribution from (https://python.org) make sure you select the option to add the location of `python.exe` to your `PATH`. Note, you may also need to add the `%LOCALAPPDATA%\Roaming\Python\Python312\Scripts\` (or similar!) directory to your path, so you are able to run `rshell` from the command line (if you have difficulty determining the directory do a search on `rshell.exe` in the File Explorer). For help on adding directories to the `PATH` environment variable, see e.g. [StackOverflow on how to add a folder to path environment variable in windows](https://stackoverflow.com/questions/44272416/how-to-add-a-folder-to-path-environment-variable-in-windows-10-with-screensho).
 
@@ -148,7 +151,8 @@ You may need to increase your terminal size. Since  [Textual](https://textual.te
 ## Introduction to the control code 
 The following figure gives the architecture of the complete system:
 ![Architecture](./img/architecture.svg)
-
+The block diagram of the PID controller is given below (c.f. `ucontrol.py`):
+![PID control](./img/control_flow.svg)
 
 ## Dependencies
 - [Micropython](https://micropython.org) [firmware for Nucleo-F401RE](https://micropython.org/download/NUCLEO_F401RE/) and [mpy-cross](https://gitlab.com/alelec/mpy_cross) tool, tested with version 1.24.0, both should have same version!

@@ -10,5 +10,5 @@ MC: box rad 10px "Microcontroller (NULCEO F401RE)" "Micropython" "(mpy_edukit.py
     arrow
     box rad 10px "Pendulum" fit
     arrow
-EN: box rad 10px "Encoder!!" fit
+EN: box rad 10px "Encoder" fit
     arrow from EN.n up until even with MC.e then to MC.e
