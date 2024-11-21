@@ -46,7 +46,6 @@ erase:
 #	$(MPREMOTE) fs rm :uencoder.mpy
 #	$(MPREMOTE) fs rm :uL6474.mpy
 #	$(MPREMOTE) fs rm :urepl.mpy
-
 	$(RSHELL) rm /flash/mpy_edukit.mpy
 	$(RSHELL) rm /flash/ucontrol.mpy
 	$(RSHELL) rm /flash/uencoder.mpy
@@ -57,8 +56,8 @@ erase_default:
 #	$(MPREMOTE) fs rm :boot.mpy
 #	$(MPREMOTE) fs rm :main.mpy
 
-	$(RSHELL) rm /flash/boot.mpy
-	$(RSHELL) rm /flash/main.mpy
+	$(RSHELL) rm /flash/boot.py
+	$(RSHELL) rm /flash/main.py
 
 pikchr: architecture.svg
 

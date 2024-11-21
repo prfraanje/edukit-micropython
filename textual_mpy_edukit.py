@@ -148,6 +148,7 @@ class IDE(App):
                 yield RadioButton('pid.run',value=False,id='pid_run')
                 yield RadioButton('pid.run1',value=True,id='pid_run1')
                 yield RadioButton('pid.run2',value=True,id='pid_run2')
+                yield Button('Reset PID',id='reset_pid_button')                
                 yield Rule(line_style="ascii")
                 yield RadioButton('ss.run',value=False,id='ss_run')
 
@@ -178,7 +179,7 @@ class IDE(App):
         plt1.title("Plot output (stepper steps and encoder ticks)") # to apply a title
         plt2 = self.query_one('#plot_input').plt
         plt2.title("Plot input (control)") # to apply a title
-        
+
 
     @on(Button.Pressed,'#log_data_button')
     async def handle_log_data(self, event: Button.Pressed) -> None:
@@ -187,6 +188,11 @@ class IDE(App):
     @on(Button.Pressed,'#stepper_zero_button')
     async def handle_stepper_zero_button(self, event: Button.Pressed) -> None:
         await serial_eval(micropython_serial_interface,'stepper.set_period_direction(0)')
+
+    @on(Button.Pressed,'#reset_pid_button')
+    async def handle_reset_pid_button(self, event: Button.Pressed) -> None:
+        await serial_eval(micropython_serial_interface,'pid.reset_state()')
+        
         
     @on(RadioSet.Changed,'#control_type')
     async def handle_radioset_control_type(self, event: RadioSet.Changed) -> None:
