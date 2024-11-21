@@ -72,7 +72,7 @@ The following block diagram of the PID controller is given below (c.f. `ucontrol
 ![PID control](./img/control_flow.svg)
 All these pictures may be convenient to better understand the following explanation.
 
-2. In the center you see two plot windows. The upper one shows the sensors: 
+2. In the center of the user interface  you see two plot windows. The upper one shows the sensors: 
    * the steps of the stepper motor in blue, that is retrieved in micropython by evaluating `stepper.get_abs_pos_efficient()`
    * the ticks of the encoder in green, that is retrieved in micropython  by `encoder.value()`).
   
