@@ -76,11 +76,11 @@ class TimeDisplay(Static):
             
         for i in range(len(data)): self.plot_history[i].append(data[i])
         self.plot_output[0].plt.clear_data()
-        self.plot_output[0].plt.scatter(self.plot_history[0],yside='left',label='stepper steps',marker='fhd')
-        self.plot_output[0].plt.scatter(self.plot_history[1],yside='right',label='encoder ticks',marker='fhd')
+        self.plot_output[0].plt.scatter(self.plot_history[0],yside='left',label='stepper steps') #,marker='fhd')
+        self.plot_output[0].plt.scatter(self.plot_history[1],yside='right',label='encoder ticks') #,marker='fhd')
         self.plot_output[0].refresh()
         self.plot_input[0].plt.clear_data()
-        self.plot_input[0].plt.scatter(self.plot_history[2],yside='left',label='control',marker='fhd')
+        self.plot_input[0].plt.scatter(self.plot_history[2],yside='left',label='control') #,marker='fhd')
         self.plot_input[0].refresh()
         
 
