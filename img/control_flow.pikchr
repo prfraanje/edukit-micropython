@@ -18,7 +18,7 @@ PID1:	box rad 10px "pid.run1" mono "pid.Kp1, pid.Ki1, pid.Kd1" mono fit
 	arrow ->
 SUM2:	circle width 0.5cm
 	arrow ->
-PEND:	box rad 10px "pendulum" big big "including stepper and encoder" big fit
+PEND:	box rad 10px "pendulum" big "including stepper" "and encoder" fit
 	arrow from 0.3cm below PEND.e then right 1.5cm "pid.y1" mono above
 	arrow from 0.3cm below PEND.e right 0.75cm then down 1cm then right until even with SUM1.s then to SUM1.s
 	line invis from 4rd vertex of last arrow to 5th vertex of last arrow "- " big big rjust

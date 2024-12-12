@@ -22,7 +22,7 @@
 
 3. Install the dependencies by the following command in the terminal (in the following we leave out "in the terminal", because the terminal will be used all over again, also make sure you are in the folder `edukit-micropython`):
    ``` 
-   pip install -r requirements.txt
+   python -m pip install -r requirements.txt
    ```
    this installs the python modules that are necessary on the PC side.
 
@@ -64,7 +64,7 @@
 ## Usage
 1. If everything is fine, you should see the screen similar as the picture above, and repeated here:
 ![User interface](./img/textual_mpy_edukit.png)
-You may need to increase your terminal size. Since  [Textual](https://textual.textualize.io/) makes use of Unicode (UTF-8) characters on Windows 10 and older versions not all characters are displayed correctly. One may try to evaluate the command `chcp 650100` before running `python textual_mpy_edukit.py`, or just live with the imperfection.
+You may need to increase your terminal size. Since  [Textual](https://textual.textualize.io/) makes use of Unicode (UTF-8) characters on Windows 10 and older versions not all characters are displayed correctly. One may try to evaluate the command `chcp 65001` in the terminal before running `python textual_mpy_edukit.py`, or just live with the imperfection.
 
 The following figure gives the architecture of the complete system:
 ![Architecture](./img/architecture.svg)
@@ -74,7 +74,7 @@ All these pictures may be convenient to better understand the following explanat
 
 2. In the center of the user interface  you see two plot windows. The upper one shows the sensors: 
    * the steps of the stepper motor in blue, that is retrieved in micropython by evaluating `stepper.get_abs_pos_efficient()`
-   * the ticks of the encoder in green, that is retrieved in micropython  by `encoder.value()`).
+   * the ticks of the encoder in green, that is retrieved in micropython  by `encoder.value()`.
   
    The lower plot shows the control value, which is proportional to the frequency of the pulses send to the stepper motor by the L6474 stepper driver. In micropython this is the variable `pid.u` for the PID controller or `state_space.u` for the state-space controller, and is send to the L6474 stepper motor driver by evaluating e.g. `stepper.set_period_direction(pid.u)` (for PID).
 

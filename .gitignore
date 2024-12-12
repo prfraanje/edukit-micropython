@@ -6,3 +6,5 @@ lib64
 pyvenv.cfg
 *.mpy
 sandbox/
+__pycache__/
+*.pickle

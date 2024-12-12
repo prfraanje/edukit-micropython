@@ -134,7 +134,7 @@ class L6474():
         self.cs.value(1)
         sleep_us(self.RESPONSE_DELAY_us)
 
-    def get_param(param='ABS_POS'):
+    def get_param(self,param='ABS_POS'):
         if param == 'ABS_POS':
             addr_int = 0x01
             num_bytes = 3

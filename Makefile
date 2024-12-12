@@ -59,7 +59,7 @@ erase_default:
 	$(RSHELL) rm /flash/boot.py
 	$(RSHELL) rm /flash/main.py
 
-pikchar: architecture.svg control_flow.svg
+pikchr: architecture.svg control_flow.svg
 
 architecture.svg: ./img/architecture.pikchr
 	pikchr-cli ./img/architecture.pikchr > ./img/architecture.svg
