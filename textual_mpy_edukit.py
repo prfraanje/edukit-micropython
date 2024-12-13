@@ -71,10 +71,16 @@ class TimeDisplay(Static):
 
     async def update_plots(self):
         global micropython_serial_interface
-        resp = await serial_eval(micropython_serial_interface,'pid.sample')
+        #ctrl_type = await serial_eval(micropython_serial_interface,'ctrlparam["type"]')
+        ctrl_type = app.query_one("#control_type").pressed_button.id
+        if ctrl_type == 'PID':
+             resp = await serial_eval(micropython_serial_interface,'pid.sample')
+        else:
+            resp = await serial_eval(micropython_serial_interface,'ss.sample')
         data = resp
             
-        for i in range(len(data)): self.plot_history[i].append(data[i])
+        #for i in range(len(data)): self.plot_history[i].append(data[i])
+        for i in range(3): self.plot_history[i].append(data[i])
         self.plot_output[0].plt.clear_data()
         self.plot_output[0].plt.scatter(self.plot_history[0],yside='left',label='stepper steps') #,marker='fhd')
         self.plot_output[0].plt.scatter(self.plot_history[1],yside='right',label='encoder ticks') #,marker='fhd')
@@ -141,7 +147,7 @@ class IDE(App):
                 # input fields for pid gains (optional)
                 yield Label("Select controller type:")
                 with RadioSet(id='control_type'):
-                    yield RadioButton("PID",value=True)
+                    yield RadioButton("PID",id='PID',value=True)
                     yield RadioButton("State-space")
                 yield Rule(line_style="ascii")
                 yield Label("PID:")
@@ -215,7 +221,7 @@ class IDE(App):
         elif button_id == 'pid_run2':
             button = 'pid.run2'
         elif button_id == 'ss_run':
-            button = 'state_space.run'
+            button = 'ss.run'
         elif button_id == 'reference_add':
             button = 'supervisory["reference_add"]'
         elif button_id == 'control_add':

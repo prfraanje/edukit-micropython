@@ -156,26 +156,52 @@ class StateSpace():
         self.run = run
         self.x = array('f',[0., 0.]) # only second order for now!
         self.u = 0.
+        self.y = [0, 0]
         self.sample = [0, 0, 0.]
         self.gain = 0.
+        self.Kp1 = 0.
+        self.Ki1 = 0.
+        self.Kd1 = 0.
+        self.e1 = 0
+        self.e1_sum = 0
+        self.y1_prev = 0
+        self.r1 = 0
+        self.run_pid = False
         self.supervisory = supervisory
 
+    def set_pid(self,Kp1=0.,Ki1=0.,Kd1=0.):
+        self.Kp1 = Kp1
+        self.Ki1 = Ki1
+        self.Kd1 = Kd1
+        
     @micropython.native
     async def control(self):
+        self.y1_prev = self.y[0]
+        
         self.y = self.get_sensor()
+
+        self.u = 0.
         
         if self.run:
             A = self.A
             B = self.B
             C = self.C
             x = self.x
-            y = self.y
+            y = self.y[1]
             x[0] = A[0][0]*x[0]+A[0][1]*x[1]+B[0]*y
             x[1] = A[1][0]*x[0]+A[1][1]*x[1]+B[1]*y
             self.u = C[0] * x[0] + C[1]*x[1]
+
+            if self.run_pid:
+                self.e1 = self.r1 - self.y[0]
+                self.e1_sum += self.e1
+                self.y1_diff = self.y[0] - self.y1_prev                
+                self.u += self.Kp1 * self.e1 + self.Ki1 * self.e1_sum - self.Kd1 * self.y1_diff  # do not take feedback of derivative in reference (!)
+                            
             self.set_actuator(self.gain * self.u)
             
-        self.sample[1] = self.y
+        self.sample[0] = self.y[0]
+        self.sample[1] = self.y[1]      
         self.sample[2] = self.u
         
             

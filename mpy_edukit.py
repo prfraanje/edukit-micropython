@@ -188,7 +188,7 @@ async def control(controller1,controller2):
 
 pid = PID(get_both_sensors(stepper,encoder),stepper.set_period_direction,ctrlparam['sampling_time_ms'],ctrlparam['Kp1'],ctrlparam['Ki1'],ctrlparam['Kd1'],ctrlparam['Kp2'],ctrlparam['Ki2'],ctrlparam['Kd2'],0,0,0,0,0,0,2**16,2**16,False,True,True,supervisory)
 
-state_space = StateSpace(encoder.value,stepper.set_period_direction,ctrlparam['sampling_time_ms'],ctrlparam['A'],ctrlparam['B'],ctrlparam['C'],False,supervisory)
+ss = StateSpace(get_both_sensors(stepper,encoder),stepper.set_period_direction,ctrlparam['sampling_time_ms'],ctrlparam['A'],ctrlparam['B'],ctrlparam['C'],False,supervisory)
 
 
 @micropython.native
@@ -201,7 +201,7 @@ async def garbage_control(sleep_ms):
 
 async def main():
     garbage_task = asyncio.create_task(garbage_control(1000))
-    control_task = asyncio.create_task(control(pid,state_space))
+    control_task = asyncio.create_task(control(pid,ss))
     repl_task = asyncio.create_task(repl(globals()))
 
     await repl_task
