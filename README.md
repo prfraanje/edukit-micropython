@@ -76,9 +76,9 @@ All these pictures may be convenient to better understand the following explanat
    * the steps of the stepper motor in blue, that is retrieved in micropython by evaluating `stepper.get_abs_pos_efficient()`
    * the ticks of the encoder in green, that is retrieved in micropython  by `encoder.value()`.
   
-   The lower plot shows the control value, which is proportional to the frequency of the pulses send to the stepper motor by the L6474 stepper driver. In micropython this is the variable `pid.u` for the PID controller or `state_space.u` for the state-space controller, and is send to the L6474 stepper motor driver by evaluating e.g. `stepper.set_period_direction(pid.u)` (for PID).
+   The lower plot shows the control value, which is proportional to the frequency of the pulses send to the stepper motor by the L6474 stepper driver. In micropython this is the variable `pid.u` for the PID controller or `ss.u` for the state-space controller, and is send to the L6474 stepper motor driver by evaluating e.g. `stepper.set_period_direction(pid.u)` (for PID).
 
-   The samples are all stored in `pid.sample` or `state_space.sample`, and retrieved at a frequency of 20 Hz in the function `update_plots` in the class `TimeDisplay` in `textual_mpy_edukit.py` (also c.f. the attribute `self.update_timer = self.set_interval(1 / 20, self.update_time`), with the state-ment
+   The samples are all stored in `pid.sample` or `ss.sample`, and retrieved at a frequency of 20 Hz in the function `update_plots` in the class `TimeDisplay` in `textual_mpy_edukit.py` (also c.f. the attribute `self.update_timer = self.set_interval(1 / 20, self.update_time`), with the statement
    ``` 
    resp = await serial_eval(micropython_serial_interface,'pid.sample')
    ```
