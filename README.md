@@ -11,7 +11,7 @@ For a fast, automated setup, use the provided scripts:
 
 **Windows:**
 ```bash
-# 1. Clone or download the repository
+# 1. Clone or download the repository in terminal:
 git clone https://github.com/prfraanje/edukit-micropython
 cd edukit-micropython
 
@@ -47,7 +47,7 @@ Or use the convenience script:
 ./run.sh
 ```
 
-> **Note:** You still need to flash MicroPython to the microcontroller and copy the Python files (see steps 6-8 in the detailed instructions below).
+> **Note:** This script does not flash Micropython nor copy the python files to the microcontroller (see steps 6-8 in the detailed instructions below; at the MBRTC pratical these steps has been done, and do not need to be repeated).
 
 ---
 
@@ -57,6 +57,9 @@ Or use the convenience script:
 - **ST-Link USB Driver** (Windows only - see step 5 below)
 
 ### Detailed Step-by-Step Installation
+
+> **Note:** If the Quick Start succeeded, these steps are not needed, and you can continue at [Usage](#usage).
+> **Note:** Rather than installing python manually and using `pip`, one may prefer to use the faster and more powerful utility `uv`, see [uv](https://docs.astral.sh/uv/).
 
 #### 1. Download the Code
 
@@ -139,7 +142,7 @@ This installs Textual (the UI framework), aioserial (for microcontroller communi
 
 Download and install the [STSW-LINK009](https://www.st.com/en/development-tools/stsw-link009.html) ST-LINK USB driver from ST Microsystems. This is required for Windows to communicate with the Nucleo board.
 
-#### 6. Flash MicroPython to the Microcontroller
+#### 6. Flash MicroPython to the Microcontroller (at the MBRTC practical this step has been done)
 
 1. Download MicroPython v1.24.0 firmware for [Nucleo-F401RE](https://micropython.org/download/NUCLEO_F401RE/)
 2. Connect your Nucleo-F401RE board to your PC via USB
@@ -172,7 +175,7 @@ mpy-cross -march=armv7emsp -O3 -X emit=bytecode urepl.py
 make
 ```
 
-#### 8. Copy Files to the Microcontroller
+#### 8. Copy Files to the Microcontroller (at the MBRTC practical this step has been done)
 
 **Windows (Using Thonny - Recommended):**
 1. Open [Thonny](https://thonny.org)
@@ -225,38 +228,6 @@ You should see the Textual UI appear!
 - Update pip: `python -m pip install --upgrade pip`
 - Make sure your virtual environment is activated
 - On Linux, you may need to install system packages: `sudo apt install python3-dev`
-
----
-
-### Advanced: Using `uv` (Faster Alternative)
-
-If you want faster dependency installation and better performance, you can use `uv` instead of traditional venv:
-
-1. Install uv:
-   ```bash
-   # Windows (PowerShell)
-   powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-
-   # Linux/Mac
-   curl -LsSf https://astral.sh/uv/install.sh | sh
-   ```
-
-2. Create environment and install dependencies:
-   ```bash
-   uv venv
-   uv pip install -r requirements.txt
-   ```
-
-3. Activate the environment:
-   ```bash
-   # Windows
-   .venv\Scripts\activate
-
-   # Linux/Mac
-   source .venv/bin/activate
-   ```
-
-4. Continue from step 7 above
 
 ---
 
