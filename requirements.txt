@@ -10,3 +10,6 @@ textual-dev>=1.8.0
 textual-plotext>=1.0.1
 textual-serve>=1.1.3
 typing_extensions>=4.15.0
+nicegui>=2.5.0
+plotly>=5.24.0
+pandas>=2.2.0

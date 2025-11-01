@@ -1,7 +1,44 @@
-# Textual Micropython Edukit Pendulum for Dynamic Control
-![User interface](./img/textual_mpy_edukit.png)
-[Micropython](https://micropython.org), [Python](https://www.python.org) and [Textual](https://textual.textualize.io/) User Interface (TUI) based control framework for the [Edukit Rotary Inverted Pendulum Control System](https://sites.google.com/view/ucla-st-motor-control/home) developed by ST Microsystems and UCLA. The micropython code is written for the STMicrosystem [Nucleo-F401RE](https://www.st.com/en/evaluation-tools/nucleo-f401re.html) the STMicrosystem [X-Nucleo IHM01A1](https://www.st.com/en/ecosystems/x-nucleo-ihm01a1.html) stepper motor board based on the [L6474](https://www.st.com/en/motor-drivers/l6474.html) stepper motor driver, that comes with the [STEVAL-EDUKIT](https://www.st.com/en/evaluation-tools/steval-edukit01.html), but can be adapted for other hardware as well.
+# Micropython Edukit Pendulum for Dynamic Control
 
+![User interface](./img/textual_mpy_edukit.png)
+
+Control framework for the [Edukit Rotary Inverted Pendulum Control System](https://sites.google.com/view/ucla-st-motor-control/home) developed by ST Microsystems and UCLA. The micropython code is written for the STMicrosystem [Nucleo-F401RE](https://www.st.com/en/evaluation-tools/nucleo-f401re.html) and the [X-Nucleo IHM01A1](https://www.st.com/en/ecosystems/x-nucleo-ihm01a1.html) stepper motor board based on the [L6474](https://www.st.com/en/motor-drivers/l6474.html) stepper motor driver, that comes with the [STEVAL-EDUKIT](https://www.st.com/en/evaluation-tools/steval-edukit01.html), but can be adapted for other hardware as well.
+
+## User Interface Options
+
+This project provides **two user interface options**:
+
+### 1. Textual (Terminal UI) - `textual_mpy_edukit.py`
+- Terminal-based interface using [Textual](https://textual.textualize.io/)
+- Runs directly in your terminal/command prompt
+- Lightweight and fast
+- Best for: SSH sessions, remote access, low-resource systems
+
+### 2. NiceGUI (Web Interface) - `nicegui_mpy_edukit.py` ⭐ **NEW**
+- Modern web-based interface using [NiceGUI](https://nicegui.io/)
+- Access from any web browser (http://localhost:8080)
+- Interactive Plotly charts with zoom/pan
+- Clean, responsive design
+- Single-user mode for hardware safety
+- **Best for**: Students, presentations, ease of use
+
+**Both interfaces provide the same functionality:**
+- ✅ Real-time plotting (stepper steps, encoder ticks, control signal)
+- ✅ Dual REPL consoles (Python + MicroPython)
+- ✅ PID and State-space controller selection
+- ✅ Data logging to CSV/pickle files
+- ✅ Manual controls and parameter adjustment
+
+**Running the interfaces:**
+```bash
+# Terminal UI (Textual)
+python textual_mpy_edukit.py
+
+# Web UI (NiceGUI) - then open http://localhost:8080 in your browser
+python nicegui_mpy_edukit.py
+```
+
+---
 
 ## Installation
 
@@ -20,7 +57,11 @@ setup.bat
 
 # 3. After setup completes, activate venv and run the app
 venv\Scripts\activate
-python textual_mpy_edukit.py
+
+# Run either interface:
+python textual_mpy_edukit.py  # Terminal UI
+# OR
+python nicegui_mpy_edukit.py  # Web UI (open http://localhost:8080)
 ```
 
 Or use the convenience script:
@@ -39,7 +80,11 @@ cd edukit-micropython
 
 # 3. After setup completes, activate venv and run the app
 source venv/bin/activate
-python textual_mpy_edukit.py
+
+# Run either interface:
+python textual_mpy_edukit.py  # Terminal UI
+# OR
+python nicegui_mpy_edukit.py  # Web UI (open http://localhost:8080)
 ```
 
 Or use the convenience script:
