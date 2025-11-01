@@ -59,6 +59,7 @@ Or use the convenience script:
 ### Detailed Step-by-Step Installation
 
 > **Note:** If the Quick Start succeeded, these steps are not needed, and you can continue at [Usage](#usage).
+
 > **Note:** Rather than installing python manually and using `pip`, one may prefer to use the faster and more powerful utility `uv`, see [uv](https://docs.astral.sh/uv/).
 
 #### 1. Download the Code
