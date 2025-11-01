@@ -6,15 +6,15 @@ from time import sleep_ms, sleep_us, ticks_us
 
 
 def binformat(int_value):
-    if 0 << int_value & int_value < 2**8:
+    """Convert number to a string with binary value for binary representation of bytes."""
+    if 0 <= int_value & int_value < 2**8:
         return f'{int_value:08b}'
-    elif 0<< int_value & int_value < 2**16:
+    elif 0<= int_value & int_value < 2**16:
         return f'{int_value:016b}'
     elif -ABS_POS_SIGN_BIT_MASK <= int_value < ABS_POS_SIGN_BIT_MASK:
         return f'{int_value:024b}'
     else:
         return f'{int_value:b}'
-
 
 # # L6474 registers
 # L6474_registers = {
@@ -36,6 +36,7 @@ def binformat(int_value):
 
 
 class L6474():
+    """Class for L6474 stepper motor controller."""
     SPI_FREQ          = const(4_000_000)    # 5_000_000 Hz is maximum according to L6474 datasheet
     RESPONSE_DELAY_us = const(1)             # should be at least t_disCS, see Ch 8 in datasheet L6474
     NOP               = const(b'\x00')
@@ -86,6 +87,7 @@ class L6474():
 
     @micropython.native
     def bytes2int(self,bytes_,signed=False):
+        """Convert bytes to integer.""" 
         val = int.from_bytes(bytes_,'big',False)
         if signed and (val & self.ABS_POS_SIGN_BIT_MASK):
             return val-2*self.ABS_POS_SIGN_BIT_MASK
@@ -94,6 +96,7 @@ class L6474():
 
     @micropython.native    
     def int2bytes(self,value,number_of_bytes,signed=False):
+        """Convert integer to bytes.""" 
         if signed and (value < 0):
             value += 2*self.ABS_POS_SIGN_BIT_MASK
         return value.to_bytes(number_of_bytes,'big',False)        
@@ -105,19 +108,13 @@ class L6474():
         rx_ = memoryview(rxdata)
         for i in range(len(txdata)):
             self.cs.value(0)
-            #rx = bytearray(1)
-            #tx = txdata[i:i+1]
             self.spi.write_readinto(tx_[i:i+1],rx_[i:i+1]) # seems to work
-
             self.cs.value(1)
             sleep_us(self.RESPONSE_DELAY_us)
-            #rxdata[i:i+1] = rx
         return rxdata[1:]
 
 
     def get_status(self):
-        #txdata = int2bytes(GET_STATUS,1)
-        #txdata += int2bytes(NOP,1) * L6474_registers['STATUS']['num_bytes']
         txdata = self.GET_STATUS + b'\x00\x00'
         rxdata = self.spi_send_receive(txdata)
         return self.bytes2int(rxdata)
@@ -134,104 +131,7 @@ class L6474():
         self.cs.value(1)
         sleep_us(self.RESPONSE_DELAY_us)
 
-    def get_param(self,param='ABS_POS'):
-        if param == 'ABS_POS':
-            addr_int = 0x01
-            num_bytes = 3
-            signed = True
-        elif param == 'EL_POS':
-            addr_int = 0x02
-            num_bytes = 2
-            signed = False
-        elif param == 'MARK':
-            addr_int = 0x03
-            num_bytes = 3
-            signed = True
-        elif param == 'TVAL':
-            addr_int = 0x09
-            num_bytes = 1
-            signed = False
-        elif param == 'T_FAST':
-            addr_int = 0x0E
-            num_bytes = 1
-            signed = False
-        elif param == 'TON_MIN':
-            addr_int = 0x0F
-            num_bytes = 1
-            signed = False
-        elif param == 'TOFF_MIN':
-            addr_int = 0x10
-            num_bytes = 1
-            signed = False
-        elif param == 'ADC_OUT':
-            addr_int = 0x12
-            num_bytes = 1
-            signed = False
-        elif param == 'OCD_TH':
-            addr_int = 0x13
-            num_bytes = 1
-            signed = False
-        elif param == 'STEP_MODE':
-            addr_int = 0x16
-            num_bytes = 1
-            signed = False
-        elif param == 'ALARM_EN':
-            addr_int = 0x17
-            num_bytes = 1
-            signed = False
-        elif param == 'ALARM_EN':
-            addr_int = 0x17
-            num_bytes = 1
-            signed = False
-        elif param == 'CONFIG':
-            addr_int = 0x18
-            num_bytes = 2
-            signed = False
-        else: # param == 'STATUS':
-            addr_int = 0x17
-            num_bytes = 2
-            signed = False
-
-        txdata = self.int2bytes(self.GET_PARAM_int | addr_int,1) + self.NOP*num_bytes
-        rxdata = self.spi_send_receive(txdata)
-        return self.bytes2int(rxdata,signed=signed)
-
-
-    @micropython.native
-    def get_abs_pos_efficient(self):
-        # for i in range(4): # consider loop unrolling
-        #     cs.value(0)
-        #     spi.write_readinto(tx[i:i+1],rx[i:i+1]) # seems to work
-        #     cs.value(1)
-        #     sleep_us(1)
-        tx = self.tx
-        rx = self.rx
-        cs = self.cs
-        spi = self.spi
-        cs.value(0)
-        spi.write_readinto(tx[0:1],rx[0:1]) # seems to work
-        cs.value(1)
-        sleep_us(1)
-        cs.value(0)
-        spi.write_readinto(tx[1:2],rx[1:2]) # seems to work
-        cs.value(1)
-        sleep_us(1)
-        cs.value(0)
-        spi.write_readinto(tx[2:3],rx[2:3]) # seems to work
-        cs.value(1)
-        sleep_us(1)
-        cs.value(0)
-        spi.write_readinto(tx[3:],rx[3:]) # seems to work
-        cs.value(1)
-        sleep_us(1)
-
-        val = int.from_bytes(self.spi_rxdata_abs_pos[1:],'big',False)
-        if val & self.ABS_POS_SIGN_BIT_MASK:
-            return val - self.ABS_POS_SIGN_TERM
-        else:
-            return val
-
-    def set_param(self,param,value):
+    def get_param_address_spec(self,param):
         param = param.upper()
         if param == 'ABS_POS':
             addr_int = 0x01
@@ -290,6 +190,48 @@ class L6474():
             num_bytes = 2
             signed = False
 
+        return addr_int, num_bytes, signed
+    
+
+
+    def get_param(self,param='ABS_POS'):
+        addr_int, num_bytes, signed = self.get_param_address_spec(param)
+        txdata = self.int2bytes(self.GET_PARAM_int | addr_int,1) + self.NOP*num_bytes
+        rxdata = self.spi_send_receive(txdata)
+        return self.bytes2int(rxdata,signed=signed)
+
+
+    @micropython.native
+    def get_abs_pos_efficient(self):
+        tx = self.tx
+        rx = self.rx
+        cs = self.cs
+        spi = self.spi
+        cs.value(0)
+        spi.write_readinto(tx[0:1],rx[0:1])
+        cs.value(1)
+        sleep_us(1)
+        cs.value(0)
+        spi.write_readinto(tx[1:2],rx[1:2])
+        cs.value(1)
+        sleep_us(1)
+        cs.value(0)
+        spi.write_readinto(tx[2:3],rx[2:3])        
+        cs.value(1)
+        sleep_us(1)
+        cs.value(0)
+        spi.write_readinto(tx[3:],rx[3:]) 
+        cs.value(1)
+        sleep_us(1)
+
+        val = int.from_bytes(self.spi_rxdata_abs_pos[1:],'big',False)
+        if val & self.ABS_POS_SIGN_BIT_MASK:
+            return val - self.ABS_POS_SIGN_TERM
+        else:
+            return val
+
+    def set_param(self,param,value):
+        addr_int, num_bytes, signed = self.get_param_address_spec(param)
         byte_values = self.int2bytes(value,num_bytes,signed=signed)
         check_value = self.bytes2int(byte_values,signed=signed)
         if check_value != value:

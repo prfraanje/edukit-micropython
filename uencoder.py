@@ -1,4 +1,5 @@
 from machine import Pin
+import micropython
 
 class Encoder:
     #__slots__ = "forward", "pin_x", "pin_y", "_x", "_y", "_pos"

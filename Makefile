@@ -3,7 +3,8 @@ MPY_CROSS = $(MPY_HOME)/mpy-cross/build/mpy-cross
 #OPT = -march=armv7emsp -O3 -X emit=native
 OPT = -march=armv7emsp -O3 -X emit=bytecode
 MPREMOTE = $(MPY_HOME)/tools/mpremote/mpremote.py
-RSHELL = rshell -p /dev/ttyACM0 -b 115200 
+PORT = /dev/ttyACM0  # serial port microcontroller is connect to (COMx on windows)
+RSHELL = rshell -p $(PORT) -b 115200 
 
 all: mpy_edukit.mpy  ucontrol.mpy  uencoder.mpy  uL6474.mpy  urepl.mpy mpy_repl_example.mpy
 

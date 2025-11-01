@@ -15,7 +15,9 @@ from ucontrol import PID, StateSpace
 from uL6474 import L6474
 from urepl import repl
 
-gc.threshold(50000) # total is about 61248
+MEMORY_THRESHOLD = const(50000) # total is about 61248
+
+gc.threshold(MEMORY_THRESHOLD)
 
 LOG_BUF_LEN = const(128)
 

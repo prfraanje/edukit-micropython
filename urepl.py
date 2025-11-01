@@ -11,7 +11,7 @@ async def repl(namespace=None):
     #BUF_SIZE=const(64)
     
     if namespace is None:
-        namespace == __import__("__main__").__dict__
+        namespace = __import__("__main__").__dict__
         
     stream_in = asyncio.StreamReader(sys.stdin)
     stream_out = asyncio.StreamWriter(sys.stdout)
