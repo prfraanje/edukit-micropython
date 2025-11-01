@@ -4,62 +4,261 @@
 
 
 ## Installation
-1. Clone the repository by the following command in the terminal (e.g. Windows: `Win-r` then enter `cmd` or `Win-x` and select Terminal; Ubuntu: `Ctl-Alt-t`):
-   ```
-   git clone https://github.com/prfraanje/edukit-micropython
-   ```
-   or download the zip-file from the green `<> Code` button on the github repository. Make sure you have a terminal and go to the folder `edukit-micropython` with (`cd` stands for change directory, directory is the 'old' word for folder):
-   ```
-   cd edukit-micropython
-   ```
-   The advantage of `git clone` would be that, after a `git clone` you always can pull the latest version of the code with just:
-   ```
-   git pull
-   ```
-   in the folder `edukit-micropython`.
 
-2. If you have not installed Python on your PC install it, and make sure you have the commands `python` and `pip` available at the [command line](https://en.wikipedia.org/wiki/Command-line_interface) (cmd or powershell in Windows, bash or zsh in Linux or Mac). For Windows you may consult [this guide](https://docs.python.org/3/using/windows.html), and if you use the python distribution from (https://python.org) make sure you select the option to add the location of `python.exe` to your `PATH`. Note, you may also need to add the `%LOCALAPPDATA%\Roaming\Python\Python312\Scripts\` (or similar!) directory to your path, so you are able to run `rshell` from the command line (if you have difficulty determining the directory do a search on `rshell.exe` in the File Explorer). For help on adding directories to the `PATH` environment variable, see e.g. [StackOverflow on how to add a folder to path environment variable in windows](https://stackoverflow.com/questions/44272416/how-to-add-a-folder-to-path-environment-variable-in-windows-10-with-screensho).
+### Quick Start (Automated Setup)
 
-3. Install the dependencies by the following command in the terminal (in the following we leave out "in the terminal", because the terminal will be used all over again, also make sure you are in the folder `edukit-micropython`):
-   ``` 
-   python -m pip install -r requirements.txt
-   ```
-   this installs the python modules that are necessary on the PC side.
+For a fast, automated setup, use the provided scripts:
 
-4. On Windows it may be needed to install the [STSW-LINK009](https://www.st.com/en/development-tools/stsw-link009.html) ST-LINK, ST-LINK/V2, ST-LINK/V2-1, STLINK-V3 USB driver signed for Windows7, Windows8, Windows10 from ST Microsystems.
+**Windows:**
+```bash
+# 1. Clone or download the repository
+git clone https://github.com/prfraanje/edukit-micropython
+cd edukit-micropython
 
-5. On the microcontroller Micropython (we used v1.24), see [Micropython for NUCLEO_F401RE](https://micropython.org/download/NUCLEO_F401RE/), should be flashed (this can be done easily by copying the `hex`-file to the usb-drive that appears when connecting the microcontroller with the PC, alternatives are using the python IDE [Thonny](https://thonny.org), compiling micropython from source, etc.).
+# 2. Run the setup script (double-click setup.bat or run in terminal)
+setup.bat
 
-6. Copy the files
+# 3. After setup completes, activate venv and run the app
+venv\Scripts\activate
+python textual_mpy_edukit.py
+```
+
+Or use the convenience script:
+```bash
+run.bat
+```
+
+**Linux/Mac:**
+```bash
+# 1. Clone or download the repository
+git clone https://github.com/prfraanje/edukit-micropython
+cd edukit-micropython
+
+# 2. Run the setup script
+./setup.sh
+
+# 3. After setup completes, activate venv and run the app
+source venv/bin/activate
+python textual_mpy_edukit.py
+```
+
+Or use the convenience script:
+```bash
+./run.sh
+```
+
+> **Note:** You still need to flash MicroPython to the microcontroller and copy the Python files (see steps 6-8 in the detailed instructions below).
+
+---
+
+### Prerequisites
+- **Python 3.12 or 3.13** installed on your PC
+- **Git** (optional, but recommended for easy updates)
+- **ST-Link USB Driver** (Windows only - see step 5 below)
+
+### Detailed Step-by-Step Installation
+
+#### 1. Download the Code
+
+**Option A: Using Git (Recommended)**
+
+Open a terminal (Windows: Press `Win+R`, type `cmd`, press Enter; Ubuntu: Press `Ctrl+Alt+T`) and run:
+```bash
+git clone https://github.com/prfraanje/edukit-micropython
+cd edukit-micropython
+```
+With Git, you can easily update to the latest version later with:
+```bash
+git pull
+```
+
+**Option B: Download ZIP**
+
+Download the ZIP file from the green `<> Code` button on GitHub, extract it, and navigate to the folder in your terminal:
+```bash
+cd edukit-micropython
+```
+
+#### 2. Install Python
+
+**Windows:**
+1. Download Python from [python.org](https://www.python.org/downloads/)
+2. Run the installer and **CHECK** "Add Python to PATH"
+3. Verify installation by opening a new terminal and running:
+   ```bash
+   python --version
    ```
-   uL6474.py
-   uencoder.py
-   ucontrol.py
-   urepl.py
-   mpy_edukit.py
-   ```
-   or preferably their compiled (`mpy`) versions (see below)
-   ```
-   uL6474.mpy
-   uencoder.mpy
-   ucontrol.mpy
-   urepl.mpy
-   mpy_edukit.mpy
-   ```
-   to the `/flash` folder on the microcontroller. There are several tools to do this: `mpremote`, `rshell`, etc. Under Windows I was not able to run these tools succesfully, and one better uses  [Thonny](https://thonny.org), in which one can copy files from and to the microcontroller. Under Linux (or WSL), one simply does
-   ``` 
-   make deploy
+   You should see `Python 3.12.x` or `Python 3.13.x`
+
+**Linux/Mac:**
+
+Python is usually pre-installed. Verify with:
+```bash
+python3 --version
+```
+
+If not installed, use your package manager:
+```bash
+# Ubuntu/Debian
+sudo apt install python3 python3-venv python3-pip
+
+# Mac (using Homebrew)
+brew install python3
+```
+
+#### 3. Create a Virtual Environment
+
+**Virtual environments isolate project dependencies and prevent conflicts with other Python projects.**
+
+**Windows:**
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+**Linux/Mac:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+You should now see `(venv)` at the start of your terminal prompt, indicating the virtual environment is active.
+
+> **Note:** You need to activate the virtual environment every time you open a new terminal. Run the activation command again if you don't see `(venv)` in your prompt.
+
+#### 4. Install Python Dependencies
+
+With the virtual environment activated, install all required packages:
+```bash
+pip install -r requirements.txt
+```
+
+This installs Textual (the UI framework), aioserial (for microcontroller communication), and all other necessary packages.
+
+#### 5. Install ST-Link USB Driver (Windows Only)
+
+Download and install the [STSW-LINK009](https://www.st.com/en/development-tools/stsw-link009.html) ST-LINK USB driver from ST Microsystems. This is required for Windows to communicate with the Nucleo board.
+
+#### 6. Flash MicroPython to the Microcontroller
+
+1. Download MicroPython v1.24.0 firmware for [Nucleo-F401RE](https://micropython.org/download/NUCLEO_F401RE/)
+2. Connect your Nucleo-F401RE board to your PC via USB
+3. A USB drive should appear (usually named `NODE_F401RE`)
+4. Copy the downloaded `.hex` file to this USB drive
+5. The board will automatically flash and reboot
+
+**Alternative:** Use [Thonny IDE](https://thonny.org) which provides a user-friendly interface for flashing MicroPython.
+
+#### 7. Compile MicroPython Files (Optional but Recommended)
+
+Compiled `.mpy` files are smaller and load faster than `.py` files.
+
+First, install the mpy-cross compiler (make sure your virtual environment is active):
+```bash
+pip install mpy-cross==1.24.0
+```
+
+**Windows:**
+```bash
+mpy-cross -march=armv7emsp -O3 -X emit=bytecode mpy_edukit.py
+mpy-cross -march=armv7emsp -O3 -X emit=bytecode ucontrol.py
+mpy-cross -march=armv7emsp -O3 -X emit=bytecode uencoder.py
+mpy-cross -march=armv7emsp -O3 -X emit=bytecode uL6474.py
+mpy-cross -march=armv7emsp -O3 -X emit=bytecode urepl.py
+```
+
+**Linux/Mac:**
+```bash
+make
+```
+
+#### 8. Copy Files to the Microcontroller
+
+**Windows (Using Thonny - Recommended):**
+1. Open [Thonny](https://thonny.org)
+2. Go to `Run` → `Select Interpreter` → Choose `MicroPython (generic)`
+3. Select the correct COM port
+4. Use the file browser to upload these files to the microcontroller's `/flash` folder:
+   - `uL6474.mpy` (or `uL6474.py` if not compiled)
+   - `uencoder.mpy` (or `uencoder.py`)
+   - `ucontrol.mpy` (or `ucontrol.py`)
+   - `urepl.mpy` (or `urepl.py`)
+   - `mpy_edukit.mpy` (or `mpy_edukit.py`)
+5. **Important:** Delete `boot.py` and `main.py` if they exist on the microcontroller
+
+**Linux/Mac:**
+```bash
+make deploy
+make erase_default
+```
+
+#### 9. Run the Application
+
+Make sure your virtual environment is activated (you should see `(venv)` in your prompt), then run:
+```bash
+python textual_mpy_edukit.py
+```
+
+You should see the Textual UI appear!
+
+> **Windows Note:** If you see garbled characters, run `chcp 65001` in your terminal before starting the application to enable UTF-8 encoding.
+
+---
+
+### Troubleshooting
+
+**"python: command not found" (Windows):**
+- Try using `py` instead of `python`
+- Make sure you checked "Add Python to PATH" during installation
+- Restart your terminal after installing Python
+
+**Virtual environment won't activate:**
+- Make sure you're in the `edukit-micropython` folder
+- On Windows, you may need to enable script execution: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser`
+
+**Can't find the microcontroller:**
+- Make sure the USB cable is connected
+- Try a different USB port
+- Check Device Manager (Windows) or `ls /dev/ttyACM*` (Linux) to verify the device is detected
+
+**Dependencies fail to install:**
+- Update pip: `python -m pip install --upgrade pip`
+- Make sure your virtual environment is activated
+- On Linux, you may need to install system packages: `sudo apt install python3-dev`
+
+---
+
+### Advanced: Using `uv` (Faster Alternative)
+
+If you want faster dependency installation and better performance, you can use `uv` instead of traditional venv:
+
+1. Install uv:
+   ```bash
+   # Windows (PowerShell)
+   powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+   # Linux/Mac
+   curl -LsSf https://astral.sh/uv/install.sh | sh
    ```
 
-7. Make sure the files `boot.py` and `main.py` are removed from the microcontroller, on Linux:
-   ``` 
-   make erase_default
+2. Create environment and install dependencies:
+   ```bash
+   uv venv
+   uv pip install -r requirements.txt
    ```
 
-8. Run the Textual Micropython Edukit Dynamic Pendulum Control user interface with
-   ``` 
-   python textual_mpy_edukit.py
+3. Activate the environment:
+   ```bash
+   # Windows
+   .venv\Scripts\activate
+
+   # Linux/Mac
+   source .venv/bin/activate
    ```
+
+4. Continue from step 7 above
+
+---
 
 ## Usage
 1. If everything is fine, you should see the screen similar as the picture above, and repeated here:

@@ -1,10 +1,23 @@
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
 bin/
 include/
 lib/
 share/
 lib64
 pyvenv.cfg
+
+# Compiled MicroPython files
 *.mpy
-sandbox/
+
+# Python cache
 __pycache__/
+*.pyc
+*.pyo
+
+# Project specific
+sandbox/
 *.pickle
