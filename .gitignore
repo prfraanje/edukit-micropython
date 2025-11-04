@@ -10,6 +10,9 @@ share/
 lib64
 pyvenv.cfg
 
+# no backup files
+*~
+
 # Compiled MicroPython files
 *.mpy
 
