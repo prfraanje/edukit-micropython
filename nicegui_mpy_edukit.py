@@ -473,7 +473,7 @@ async def execute_micropython(command: str, output_log) -> None:
 # DATA LOGGING FUNCTIONS
 # ============================================================================
 
-async def start_logging(num_buffers: int, append_datetime: bool, status_label, log_button):
+async def start_logging(num_buffers: int, append_datetime: bool, status_label, log_button, client=None):
     """
     Start data logging from microcontroller
 
@@ -488,6 +488,7 @@ async def start_logging(num_buffers: int, append_datetime: bool, status_label, l
         append_datetime: Whether to append datetime to filename
         status_label: ui.label to update with status
         log_button: ui.button to disable during logging
+        client: NiceGUI client context (optional, needed for ui.notify in background tasks)
     """
     logger.info(f"Starting data logging: {num_buffers} buffers")
 
@@ -552,14 +553,28 @@ async def start_logging(num_buffers: int, append_datetime: bool, status_label, l
         state.logging = False
         log_button.set_enabled(True)
         status_label.set_text(f'Saved: {fname}')
-        ui.notify(f'Data saved to {fname}', type='positive')
+
+        # Use client context for ui.notify if available
+        if client:
+            with client:
+                ui.notify(f'Data saved to {fname}', type='positive')
+        else:
+            ui.notify(f'Data saved to {fname}', type='positive')
+
         logger.info(f"Data logging complete: {fname}")
 
     except Exception as e:
         state.logging = False
         log_button.set_enabled(True)
         status_label.set_text('Logging failed!')
-        ui.notify(f'Logging error: {e}', type='negative')
+
+        # Use client context for ui.notify if available
+        if client:
+            with client:
+                ui.notify(f'Logging error: {e}', type='negative')
+        else:
+            ui.notify(f'Logging error: {e}', type='negative')
+
         logger.error(f"Logging failed: {e}")
 
 
@@ -577,6 +592,9 @@ def create_left_panel():
     - Reference/control add toggles
     - Stepper zero button
     """
+    # Capture client context for background tasks
+    client = ui.context.client
+
     with ui.card().classes('w-64'):
         ui.label('Data Logging').classes('text-xl font-bold mb-2')
         ui.separator()
@@ -596,7 +614,8 @@ def create_left_panel():
                     int(num_bufs.value),
                     datetime_switch.value,
                     log_status,
-                    log_button
+                    log_button,
+                    client  # Pass client context for ui.notify
                 )
             ),
             icon='save'
@@ -785,6 +804,8 @@ async def create_connection_dialog():
 
     Auto-detects STMicroelectronics ports and allows manual port selection.
     Returns a NiceGUI dialog that can be opened.
+
+    Note: Captures client context to allow UI operations from async callbacks.
     """
     # Auto-detect ports
     ports = list_ports.comports()
@@ -824,22 +845,29 @@ async def create_connection_dialog():
 
         status_label = ui.label('').classes('text-sm mt-4 font-mono')
 
+        # IMPORTANT: Capture the client context here
+        # This allows do_connect() to create UI elements from a background task
+        # Without this, we get: "RuntimeError: The current slot cannot be determined"
+        client = ui.context.client
+
         async def do_connect():
-            status_label.set_text('Connecting...')
-            success, message = await connect_serial(port_select.value)
+            # Use the captured client context for all UI operations
+            with client:
+                status_label.set_text('Connecting...')
+                success, message = await connect_serial(port_select.value)
 
-            if success:
-                status_label.set_text('✓ Connected!')
-                ui.notify(message, type='positive')
+                if success:
+                    status_label.set_text('✓ Connected!')
+                    ui.notify(message, type='positive')
 
-                # Start update timer
-                state.update_timer = ui.timer(1.0 / UPDATE_FREQUENCY, update_plots_from_microcontroller)
+                    # Start update timer (now within client context)
+                    state.update_timer = ui.timer(1.0 / UPDATE_FREQUENCY, update_plots_from_microcontroller)
 
-                await asyncio.sleep(0.5)
-                dialog.close()
-            else:
-                status_label.set_text(f'✗ {message}')
-                ui.notify(message, type='negative')
+                    await asyncio.sleep(0.5)
+                    dialog.close()
+                else:
+                    status_label.set_text(f'✗ {message}')
+                    ui.notify(message, type='negative')
 
         with ui.row().classes('w-full gap-2 mt-4'):
             ui.button('Connect', on_click=lambda: asyncio.create_task(do_connect())).props('color=primary').classes('flex-grow')
