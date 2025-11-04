@@ -42,7 +42,7 @@ class CustomInput(Input):
         
     def action_cursor_right(self) -> None:
         """Accept an auto-completion or move the cursor one position to the right."""
-        if self._cursor_at_end and self._suggestion:
+        if self.cursor_at_end and self._suggestion:
             self.value = self._suggestion
             self.cursor_position = len(self.value)
         else:
