@@ -21,12 +21,11 @@ setup.bat
 # 3. After setup completes, activate venv and run the app
 venv\Scripts\activate
 python textual_mpy_edukit.py
-```
-
-Or use the convenience script:
-```bash
+# Or use the convenience script:
 run.bat
 ```
+
+If successful, you can continue at [Usage](#usage) below.
 
 **Linux/Mac:**
 ```bash
@@ -40,12 +39,11 @@ cd edukit-micropython
 # 3. After setup completes, activate venv and run the app
 source venv/bin/activate
 python textual_mpy_edukit.py
-```
-
-Or use the convenience script:
-```bash
+#Or use the convenience script:
 ./run.sh
 ```
+
+If successful, you can continue at [Usage](#usage) below.
 
 > **Note:** This script does not flash Micropython nor copy the python files to the microcontroller (see steps 6-8 in the detailed instructions below; at the MBRTC pratical these steps has been done, and do not need to be repeated).
 
