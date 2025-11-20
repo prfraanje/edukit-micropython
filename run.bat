@@ -13,7 +13,7 @@ echo Activating virtual environment...
 call venv\Scripts\activate.bat
 
 echo Starting edukit-micropython application...
-python textual_mpy_edukit.py
+call python textual_mpy_edukit.py
 
 REM Keep window open if there was an error
 if errorlevel 1 pause
