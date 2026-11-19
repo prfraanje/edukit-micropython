@@ -53,7 +53,7 @@ echo.
 
 REM Install mpy-cross for compiling MicroPython files
 echo [4/4] Installing mpy-cross compiler...
-call pip install mpy-cross==1.24.0
+call pip install mpy-cross==1.24.0.post2
 if errorlevel 1 (
     echo WARNING: Failed to install mpy-cross
     echo You can still use .py files instead of compiled .mpy files
